@@ -4,7 +4,7 @@
 const express = require("express") ;
 const mongoose = require("mongoose") ;
 const path = require("path");
-const logger = require('../loggers').appLogger ;
+const logger = require('../loggers').appLogger;
 const cookieParser = require("cookie-parser");
 
 /**

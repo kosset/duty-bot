@@ -3,7 +3,7 @@ logging:
   console:
     level: debug
   file:
-    level: debug
+    level: error
     max_files: 14 # 1 file per day
 
 # Quotes APIs

@@ -25,7 +25,6 @@
   "dependencies": {
     "config": "^2.0.1",
     "cookie-parser": "~1.4.3",
-    "debug": "~2.6.9",
     "express": "~4.16.0",
     "mongoose": "^5.2.13",
     "morgan": "~1.9.0",

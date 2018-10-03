@@ -8,6 +8,7 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*-audit.json
 
 # Dependency directories
 node_modules/
