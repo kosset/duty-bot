@@ -1,0 +1,24 @@
+{
+  "name": "hygieia",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "config": "^2.0.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.16.0",
+    "mongoose": "^5.2.13",
+    "morgan": "~1.9.0",
+    "request": "^2.88.0",
+    "winston": "^3.1.0",
+    "winston-daily-rotate-file": "^3.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.4",
+    "prettier": "^1.14.2"
+  }
+}

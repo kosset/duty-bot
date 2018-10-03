@@ -1,0 +1,16 @@
+# Logging configuration
+logging:
+  console:
+    level: debug
+  file:
+    level: debug
+
+# Quotes APIs
+quotes:
+  favqs:
+    token:
+
+# Platforms
+facebook:
+  verify_token: verification_token #Developer Defined token
+  page_access_token:
