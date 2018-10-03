@@ -1,1 +1,1 @@
-# Hygieia - Your fitness partner# hygieia
+# Hygieia - Your fitness partner
