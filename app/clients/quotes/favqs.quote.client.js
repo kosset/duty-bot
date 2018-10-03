@@ -1,10 +1,7 @@
 import request from "request";
-import QuoteClient from "quote.client";
 
-module.exports = class FavqsQuoteClient extends QuoteClient {
+module.exports = class FavqsQuoteClient {
   constructor(token) {
-    super();
-
     this.token = token;
   }
 
