@@ -51,7 +51,7 @@ router.get(['/facebook', '/facebook/'], function (req, res, next) {
 });
 
 // Creates the endpoint for our webhook
-router.post(['/facebook', '/facebook/'], function (req, res, next) {
+router.post(['/facebook', '/facebook/'], function (req, res) {
 
     let body = req.body;
 

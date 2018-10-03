@@ -4,6 +4,7 @@ logging:
     level: debug
   file:
     level: debug
+    max_files: 14 # 1 file per day
 
 # Quotes APIs
 quotes:
