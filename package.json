@@ -6,6 +6,22 @@
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 6,
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "impliedStrict ": true
+      }
+    },
+    "rules": {
+      "semi": 2
+    },
+    "env": {
+      "es6": true,
+      "node": true
+    }
+  },
   "dependencies": {
     "config": "^2.0.1",
     "cookie-parser": "~1.4.3",
@@ -18,6 +34,7 @@
     "winston-daily-rotate-file": "^3.3.2"
   },
   "devDependencies": {
+    "eslint": "^5.6.1",
     "nodemon": "^1.18.4",
     "prettier": "^1.14.2"
   }
