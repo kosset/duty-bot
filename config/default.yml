@@ -15,3 +15,7 @@ quotes:
 facebook:
   verify_token: verification_token #Developer Defined token
   page_access_token:
+
+# MongoDB
+mongo:
+  url: mongodb://localhost:27017/test

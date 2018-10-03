@@ -5,7 +5,7 @@ const
 
 const router = express.Router();
 
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
 
     let api_resources = {
         "_links": {
@@ -21,7 +21,7 @@ router.get('/', function(req, res, next) {
 });
 
 // Adds support for GET requests to our webhook
-router.get(['/facebook', '/facebook/'], function (req, res, next) {
+router.get(['/facebook', '/facebook/'], function (req, res) {
 
     // Your verify token. Should be a random string.
     let VERIFY_TOKEN = config.get('facebook.verify_token');

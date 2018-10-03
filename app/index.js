@@ -1,17 +1,20 @@
 /**
  * NPM Module Dependencies
  */
-const express = require("express") ;
-const mongoose = require("mongoose") ;
-const path = require("path");
-const logger = require('../loggers').appLogger;
-const cookieParser = require("cookie-parser");
+const
+  express = require("express"),
+  mongoose = require("mongoose"),
+  path = require("path"),
+  logger = require('../loggers').appLogger,
+  cookieParser = require("cookie-parser"),
+  config = require('config');
 
 /**
  * LOCAL Module Dependencies
  */
-const indexRouter = require('../routes/index');
-const apiRouter = require('../routes/api');
+const
+  indexRouter = require('../routes/index'),
+  apiRouter = require('../routes/api');
 
 const app = express();
 
@@ -29,9 +32,9 @@ app.use(['/api','/api/'], apiRouter);
 /**
  * Database Connection
  */
-mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true}).then(
-    () => { logger.info(`Successful connection with MongoDB!`)},
-    error => { logger.error(error)}
+mongoose.connect(config.get('mongo.url'), {useNewUrlParser: true}).then(
+    () => { logger.info(`Successful connection with MongoDB`)},
+    error => { logger.error(error); process.exit(1);}
 );
 
 module.exports = app;
