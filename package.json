@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "node ./bin/server.js",
+    "dev": "nodemon ./bin/server.js"
   },
   "eslintConfig": {
     "parserOptions": {
