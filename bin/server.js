@@ -4,15 +4,15 @@
  * Module dependencies.
  */
 const
-    app = require("../core/index"),
+    app = require("../index"),
     http = require("http"),
     logger = require('../loggers/index').appLogger,
-    debug = require("debug")("hygieia:server");
+    config = require("config");
 /**
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.PORT || "3000");
+const port = normalizePort(config.get('port') || "3000");
 app.set("port", port);
 
 /**

@@ -1,16 +1,16 @@
-import { Schema, model } from "mongoose";
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
   {
-    psid: {
-        type: String,
-        required: true
-    }, // Platform Scoped ID
+    psid: { type: String, required: true }, // Platform Scoped ID
     name: {
       first: String,
       last: String
     },
-    lastMessage: String
+    lastMessage: String,
+    gender: { type: String, enum: ['male', 'female', 'unknown'], default: 'unknown' },
+    channel: { type: String, enum: ['facebook'] }
   },
   {
     timestamps: {
@@ -41,7 +41,7 @@ userSchema.statics.findByPSID = function (psid) {
 };
 
 // Create the model
-const UserModel = model("User", userSchema);
+const UserModel = mongoose.model("User", userSchema);
 
 // Make it available
 module.exports = UserModel;

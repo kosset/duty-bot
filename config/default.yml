@@ -1,3 +1,5 @@
+port: 3000
+
 # Logging configuration
 logging:
   console:
@@ -15,6 +17,7 @@ quotes:
 facebook:
   verify_token: verification_token #Developer Defined token
   page_access_token:
+  graph_version:
 
 # MongoDB
 mongo:

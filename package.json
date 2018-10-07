@@ -25,6 +25,7 @@
   "dependencies": {
     "config": "^2.0.1",
     "cookie-parser": "~1.4.3",
+    "dialogflow": "^0.7.0",
     "express": "~4.16.0",
     "mongoose": "^5.2.13",
     "request": "^2.88.0",
