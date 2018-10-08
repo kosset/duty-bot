@@ -2,7 +2,8 @@ const express = require("express"),
   config = require("config"),
   logger = require("../loggers").appLogger,
   core = require("../core"),
-  channels = require("../core/channels");
+  channels = require("../core/channels"),
+  nlp = require("../core/natural_language_processors");
 
 const router = express.Router();
 
@@ -10,9 +11,13 @@ const router = express.Router();
  * Build the core(s)
  */
 const fbChannel = new channels.Facebook(
-  config.get("facebook.page_access_token"),
-  config.get("facebook.graph_version")
-);
+    config.get("facebook.page_access_token"),
+    config.get("facebook.graph_version")
+  ),
+  dialogflow = new nlp.Dialogflow(
+    config.get("dialogflow.project_id"),
+    config.get("dialogflow.lang")
+  );
 
 router.get("/", function(req, res) {
   let api_resources = {
@@ -69,7 +74,7 @@ router.post(["/facebook", "/facebook/"], function(req, res) {
 
       // Async functionality
       //TODO: Handle the event
-      core.manageWebhookEvent(webhook_event, fbChannel);
+      core.manageWebhookEvent(webhook_event, fbChannel, dialogflow);
     });
 
     // Returns a '200 OK' response to all requests

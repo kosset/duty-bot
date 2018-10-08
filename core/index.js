@@ -2,28 +2,40 @@ const UserModel = require("./models/user.model"),
 logger = require('../loggers').appLogger;
 
 module.exports = {
-  manageWebhookEvent: async function(rawEvent, channel) {
+  manageWebhookEvent: async function(rawEvent, channel, naturalLanguageProcessor) {
+
+    let event, userData, nlpResponse;
+
     //TODO: [OPTIONAL] Convert Incoming Response to An Event
     // Accept-Expect: Text, attachments, attachments and text (links), postback
-    let event = channel.convert.toEvent(rawEvent);
+    event = channel.convert.toEvent(rawEvent);
 
     // Fetch from the DB the correct stored data Or Store now some
-    let userData = await this.loadUserData(event, channel);
+    userData = await this.loadUserData(event, channel);
 
     logger.debug(`User data loaded: ${JSON.stringify(userData)}`);
 
-    //TODO: Pre NLProcess (Some times we may skip it, e.g. on most Postbacks)
+    //Pre NLProcess (Some times we may skip it, e.g. on most Postbacks)
+    const doNLP = naturalLanguageProcessor.preProcess(event, userData);
 
-    //TODO: NLProcess
-    const nlpResponse = { fulfillmentText: event.postback
-        ? event.postback.payload
-        : event.message.text
-          ? event.message.text
-          : event.message.attachments[0].type.toUpperCase()};
+    if (doNLP) {
+      //TODO: NLProcess
+      nlpResponse = await naturalLanguageProcessor.process(event, userData);
 
-    //TODO: Post NLProcess
+      //TODO: Post NLProcess
+      naturalLanguageProcessor.postProcess(event, userData, nlpResponse);
+    } else {
+
+      nlpResponse = { fulfillmentText: event.postback
+          ? event.postback.payload
+          : event.message.text
+            ? event.message.text
+            : event.message.attachments[0].type.toUpperCase()};
+
+    }
 
     //Convert Response to PlatformResponse and Send the Response
+    // NOTE: Do not wait if it is sent, do this async.
     channel.sendResponse(event, userData, nlpResponse);
 
     //Store the needed User Data
@@ -36,8 +48,10 @@ module.exports = {
   },
 
   loadUserData: async function(event, channel) {
-    //Fetch from the DB the correct stored data
+
     let userData, retrievedData, newUserData;
+
+    //Fetch from the DB the correct stored data
     try {
       userData = await UserModel.findByPSID(event.sender.id);
     } catch (e) {
