@@ -1,5 +1,6 @@
 const Client = require("../clients/platforms/facebook.platform.client"),
-  Converter = require("../converters").Facebook;
+  Converter = require("../converters").Facebook,
+  misc = require('../../utils/misc');
 
 module.exports = class FacebookChannel {
   constructor(token, graphVersion) {
@@ -23,6 +24,8 @@ module.exports = class FacebookChannel {
   }
 
   async sendResponse(event, userData, nlpResponse) {
+    let that = this;
+
     try {
       await this.client.sendTextResponse(
         userData.psid,
