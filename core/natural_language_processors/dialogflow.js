@@ -1,84 +1,56 @@
 const dialogflow = require('dialogflow');
+const Converter = require('../converters').Dialogflow;
 
 module.exports = class Dialogflow {
 
   constructor(projectId, language) {
     this.projectId = projectId;
     this.languageCode = language;
-
+    this.convert = new Converter();
     this.sessionClient = new dialogflow.SessionsClient();
   }
 
-  preProcess() {
+  async process(event, userData) {
+    const that = this;
 
-    //TODO: return true or false, to continue with the process
-    return false;
-  }
-
-  process(event, userData) {
     const sessionId = userData.id;
-
-    // Define session path
-    const sessionPath = this.sessionClient.sessionPath(this.projectId, sessionId);
-
-
-    //TODO: Check what type of event was and build the correct request
-
-  }
-
-  postProcess(event, userData) {
-
-  }
-
-  async sendTextQuery(sessionPath, text) {
-    const that = this;
-
-    // The text query request.
-    const request = {
-      session: sessionPath,
-      queryInput: {
-        text: {
-          text: text,
-          languageCode: that.languageCode,
-        },
-      },
+    const reqOptions = {
+      language: that.languageCode,
+      sessionPath: that.sessionClient.sessionPath(that.projectId, sessionId)
     };
 
-    try {
-      const responses = await sessionClient.detectIntent(request);
-      return responses[0].queryResult;
-    } catch (e) {
-      //TODO: Check if length of text exceeds 256
-      //TODO: Retry 3 times
+    const request = that.convert.toRequest(event, userData, reqOptions);
 
+    try {
+
+      if (request) {
+        const result = await that.detectIntent(request);
+        await that.analyzeResult(event, userData, result);
+        return result;
+      }
+
+    } catch (e) {
       throw e;
     }
   }
 
-  async sendPostbackQuery(sessionPath, eventName, parameters = {}) {
+  async detectIntent(request) {
     const that = this;
 
-    // The event query request.
-    const request = {
-      session: sessionPath,
-      queryInput: {
-        event: {
-          name: eventName,
-          parameters: parameters,
-          languageCode: that.languageCode,
-        },
-      },
-    };
-
     try {
-      const responses = await sessionClient.detectIntent(request);
+      const responses = await that.sessionClient.detectIntent(request);
       return responses[0].queryResult;
     } catch (e) {
       //TODO: Check if length of text exceeds 256
       //TODO: Retry 3 times
-
       throw e;
     }
   }
 
-}
+  async analyzeResult(event, userData, result) {
+    //TODO: Build the jumps (conditional and unconditional)
+
+    //TODO: Enrich/Update userData etc
+  }
+
+};

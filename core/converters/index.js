@@ -1,5 +1,4 @@
-const FacebookConverter = require('./facebook.converter');
-
 module.exports = {
-  Facebook: FacebookConverter
+  Facebook: require('./facebook.converter'),
+  Dialogflow: require('./dialogflow.converter')
 }

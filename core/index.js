@@ -4,39 +4,41 @@ logger = require('../loggers').appLogger;
 module.exports = {
   manageWebhookEvent: async function(rawEvent, channel, naturalLanguageProcessor) {
 
-    let event, userData, nlpResponse;
+    let event, userData, nlpResponse, parallelPromises = [];
 
     //TODO: [OPTIONAL] Convert Incoming Response to An Event
     // Accept-Expect: Text, attachments, attachments and text (links), postback
     event = channel.convert.toEvent(rawEvent);
 
     // Fetch from the DB the correct stored data Or Store now some
-    userData = await this.loadUserData(event, channel);
+    try {
+      userData = await this.loadUserData(event, channel);
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
 
     logger.debug(`User data loaded: ${JSON.stringify(userData)}`);
 
-    //Pre NLProcess (Some times we may skip it, e.g. on most Postbacks)
-    const doNLP = naturalLanguageProcessor.preProcess(event, userData);
-
-    if (doNLP) {
-      //TODO: NLProcess
+    //NLProcess
+    try {
       nlpResponse = await naturalLanguageProcessor.process(event, userData);
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
 
-      //TODO: Post NLProcess
-      naturalLanguageProcessor.postProcess(event, userData, nlpResponse);
-    } else {
-
+    if (!nlpResponse) {
       nlpResponse = { fulfillmentText: event.postback
           ? event.postback.payload
           : event.message.text
             ? event.message.text
             : event.message.attachments[0].type.toUpperCase()};
-
     }
 
     //Convert Response to PlatformResponse and Send the Response
     // NOTE: Do not wait if it is sent, do this async.
-    channel.sendResponse(event, userData, nlpResponse);
+    parallelPromises.push(channel.sendResponse(event, userData, nlpResponse));
 
     //Store the needed User Data
     userData.lastMessage = event.postback
@@ -44,7 +46,11 @@ module.exports = {
       : event.message.text
         ? event.message.text
         : event.message.attachments[0].type.toUpperCase();
-    this.storeUserData(userData);
+    parallelPromises.push(this.storeUserData(userData));
+
+    Promise.all(parallelPromises).catch(e => {
+      logger.error(e);
+    });
   },
 
   loadUserData: async function(event, channel) {
