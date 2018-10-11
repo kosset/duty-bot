@@ -1,5 +1,6 @@
 const dialogflow = require("dialogflow");
 const Converter = require("../converters").Dialogflow;
+const logger = require('../../loggers').appLogger;
 
 module.exports = class Dialogflow {
   constructor(projectId, language, privateKey, clientEmail) {
@@ -40,7 +41,9 @@ module.exports = class Dialogflow {
     const that = this;
 
     try {
+      logger.debug(`Querying on Dialoglfow: ${JSON.stringify(request)}`);
       const responses = await that.sessionClient.detectIntent(request);
+      logger.debug(`Result of Dialoglfow: ${JSON.stringify(responses[0].queryResult)}`);
       return responses[0].queryResult;
     } catch (e) {
       //TODO: Check if length of text exceeds 256

@@ -1,6 +1,8 @@
-const Client = require("../clients/platforms/facebook.platform.client"),
+const
+  Client = require("../clients/platforms/facebook.platform.client"),
   Converter = require("../converters").Facebook,
-  misc = require('../../utils/misc');
+  misc = require('../../utils/misc'),
+  logger = require('../../loggers').appLogger;
 
 module.exports = class FacebookChannel {
   constructor(token, graphVersion) {
@@ -28,7 +30,10 @@ module.exports = class FacebookChannel {
 
     try {
       let responseData = that.convert.toResponseMessage(event, userData, nlpResponse);
-      await this.client.sendResponseMessage(responseData);
+      await misc.asyncForEach(responseData, (res) => {
+        logger.debug(`Sending response back to fb: ${JSON.stringify(res)}`);
+        return that.client.sendResponseMessage(res);
+      });
     } catch (e) {
       throw e;
     }
