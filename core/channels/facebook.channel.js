@@ -27,10 +27,8 @@ module.exports = class FacebookChannel {
     let that = this;
 
     try {
-      await this.client.sendTextResponse(
-        userData.psid,
-        nlpResponse.fulfillmentText
-      );
+      let responseData = that.convert.toResponseMessage(event, userData, nlpResponse);
+      await this.client.sendResponseMessage(responseData);
     } catch (e) {
       throw e;
     }

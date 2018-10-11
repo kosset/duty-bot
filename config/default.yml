@@ -22,3 +22,10 @@ facebook:
 # MongoDB
 mongo:
   url: mongodb://localhost:27017/test
+
+# Dialogflow
+dialogflow:
+  project_id:
+  private_key:
+  client_email:
+  lang: en

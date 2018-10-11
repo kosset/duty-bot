@@ -1,13 +1,17 @@
-const dialogflow = require('dialogflow');
-const Converter = require('../converters').Dialogflow;
+const dialogflow = require("dialogflow");
+const Converter = require("../converters").Dialogflow;
 
 module.exports = class Dialogflow {
-
-  constructor(projectId, language) {
+  constructor(projectId, language, privateKey, clientEmail) {
     this.projectId = projectId;
     this.languageCode = language;
     this.convert = new Converter();
-    this.sessionClient = new dialogflow.SessionsClient();
+    this.sessionClient = new dialogflow.SessionsClient({
+      credentials: {
+        private_key: privateKey,
+        client_email: clientEmail
+      }
+    });
   }
 
   async process(event, userData) {
@@ -22,13 +26,11 @@ module.exports = class Dialogflow {
     const request = that.convert.toRequest(event, userData, reqOptions);
 
     try {
-
       if (request) {
         const result = await that.detectIntent(request);
         await that.analyzeResult(event, userData, result);
         return result;
       }
-
     } catch (e) {
       throw e;
     }
@@ -49,8 +51,6 @@ module.exports = class Dialogflow {
 
   async analyzeResult(event, userData, result) {
     //TODO: Build the jumps (conditional and unconditional)
-
     //TODO: Enrich/Update userData etc
   }
-
 };

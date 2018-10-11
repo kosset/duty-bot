@@ -23,6 +23,7 @@ module.exports = class FacebookConverter {
             };
           case 1: // Card or Carousel
             return {
+              messaging_type: "RESPONSE",
               recipient:{
                 id: psid
               },

@@ -16,7 +16,9 @@ const fbChannel = new channels.Facebook(
   ),
   dialogflow = new nlp.Dialogflow(
     config.get("dialogflow.project_id"),
-    config.get("dialogflow.lang")
+    config.get("dialogflow.lang"),
+    config.get("dialogflow.private_key"),
+    config.get("dialogflow.client_email")
   );
 
 router.get("/", function(req, res) {
