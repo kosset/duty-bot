@@ -1,6 +1,6 @@
 import request from "request";
 
-module.exports = class FavqsQuoteClient {
+module.exports = class FavqsClient {
   constructor(token) {
     this.token = token;
   }

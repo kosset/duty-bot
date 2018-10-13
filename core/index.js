@@ -1,24 +1,29 @@
 const UserModel = require("./models/user.model"),
-logger = require('../loggers').appLogger;
+  logger = require("../loggers").appLogger;
 
 module.exports = {
-  manageWebhookEvent: async function(rawEvent, channel, naturalLanguageProcessor) {
-
-    let event, userData, nlpResponse, parallelPromises = [];
+  manageWebhookEvent: async function(
+    rawEvent,
+    channel,
+    naturalLanguageProcessor
+  ) {
+    let event,
+      userData,
+      nlpResponse,
+      parallelPromises = [];
 
     //TODO: [OPTIONAL] Convert Incoming Response to An Event
     // Accept-Expect: Text, attachments, attachments and text (links), postback
     event = channel.convert.toEvent(rawEvent);
 
-    // Fetch from the DB the correct stored data Or Store now some
+    // Fetch from the DB the correct stored data Or Create now some
     try {
       userData = await this.loadUserData(event, channel);
+      logger.debug(`User data loaded: ${JSON.stringify(userData)}`);
     } catch (e) {
       logger.error(e);
       throw e;
     }
-
-    logger.debug(`User data loaded: ${JSON.stringify(userData)}`);
 
     //NLProcess
     try {
@@ -26,14 +31,6 @@ module.exports = {
     } catch (e) {
       logger.error(e);
       throw e;
-    }
-
-    if (!nlpResponse) {
-      nlpResponse = { fulfillmentText: event.postback
-          ? event.postback.payload
-          : event.message.text
-            ? event.message.text
-            : event.message.attachments[0].type.toUpperCase()};
     }
 
     //Convert Response to PlatformResponse and Send the Response
@@ -48,13 +45,12 @@ module.exports = {
         : event.message.attachments[0].type.toUpperCase();
     parallelPromises.push(this.storeUserData(userData));
 
-    Promise.all(parallelPromises).catch(e => {
+    await Promise.all(parallelPromises).catch(e => {
       logger.error(e);
     });
   },
 
   loadUserData: async function(event, channel) {
-
     let userData, retrievedData, newUserData;
 
     //Fetch from the DB the correct stored data
@@ -77,14 +73,9 @@ module.exports = {
             last: retrievedData.last_name
           },
           channel: event.channel,
-          gender: retrievedData.gender,
-          lastMessage: event.postback
-            ? event.postback.payload
-            : event.message.text
-              ? event.message.text
-              : event.message.attachments[0].type.toUpperCase()
+          gender: retrievedData.gender
         });
-        await newUserData.save();
+        // await newUserData.save();
         userData = newUserData;
       } catch (e) {
         logger.error(e);
@@ -95,12 +86,12 @@ module.exports = {
   },
 
   storeUserData: async function(userData) {
-
     try {
       await userData.save();
     } catch (e) {
-      logger.error(`Error occurred while storing ${userData.name.full} data: ${e}`);
+      logger.error(
+        `Error occurred while storing ${userData.name.full} data: ${e}`
+      );
     }
-
   }
 };

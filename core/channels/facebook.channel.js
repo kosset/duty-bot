@@ -1,6 +1,7 @@
 const
-  Client = require("../clients/platforms/facebook.platform.client"),
+  Client = require("../clients/facebook.client"),
   Converter = require("../converters").Facebook,
+  GenderClient = require("../clients/genderize.client"),
   misc = require('../../utils/misc'),
   logger = require('../../loggers').appLogger;
 
@@ -8,14 +9,23 @@ module.exports = class FacebookChannel {
   constructor(token, graphVersion) {
     this.client = new Client(token, graphVersion);
     this.convert = new Converter();
+    this.genderizeClient = new GenderClient();
   }
 
   async retrieveNewUserData(event) {
+    let data;
+
     //Request user public info
     try {
-      return await this.client.getUserProfileFields(
+      data = await this.client.getUserProfileFields(
         event.sender.id
       );
+
+      if (data.gender) {
+        const genderRes = await this.genderizeClient.getGenderByName(data.first_name);
+        data.gender = genderRes.gender;
+      }
+
     } catch (e) {
       throw e;
     }

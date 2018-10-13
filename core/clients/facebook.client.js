@@ -1,6 +1,6 @@
 const request = require('request');
 
-module.exports = class FacebookPlatformClient {
+module.exports = class FacebookClient {
   constructor(token, graphVersion) {
     this.token = token;
     this.graphVersion = graphVersion;
