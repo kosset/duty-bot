@@ -1,4 +1,4 @@
-const request = require('request');
+const request = require("request");
 
 module.exports = class FacebookClient {
   constructor(token, graphVersion) {
@@ -37,8 +37,33 @@ module.exports = class FacebookClient {
 
   sendQuickRepliesResponse() {}
 
-  sendTypingIndicator() {}
+  sendMarkAsSeen(psid) {
+    return this.sendSenderAction(psid, "mark_seen");
+  }
 
+  sendTypingIndicator(psid) {
+    return this.sendSenderAction(psid, "typing_on");
+  }
+
+  sendSenderAction(psid, senderAction) {
+    const responseData = {
+      recipient: {
+        id: psid
+      },
+      sender_action: senderAction
+    };
+
+    return this.sendResponseMessage(responseData);
+  }
+
+  /**
+   * @description The sender actions message property allows you to control indicators
+   * for typing and read receipts in the conversation via the Send API.
+   * This is helpful for letting message recipients known you have seen and
+   * are processing their message.
+   * @param data
+   * @returns {Promise<T | never>}
+   */
   sendResponseMessage(data) {
     const that = this;
     const options = {

@@ -12,18 +12,19 @@ module.exports = {
       nlpResponse,
       parallelPromises = [];
 
-    //TODO: [OPTIONAL] Convert Incoming Response to An Event
     // Accept-Expect: Text, attachments, attachments and text (links), postback
-    event = channel.convert.toEvent(rawEvent);
+    event = channel.convert.toEvent(rawEvent); //TODO: [OPTIONAL] Convert Incoming Response to An Event
 
-    // Fetch from the DB the correct stored data Or Create now some
+    // TODO: Make it channelWise not ClientWise
+    channel.client.sendMarkAsSeen(event.sender.id);
+
+    // Load User Data
     try {
       userData = await this.loadUserData(event, channel);
       logger.debug(`User data loaded: ${JSON.stringify(userData)}`);
     } catch (e) {
-      logger.warn(`Could not load data for user with psid ${event.sender.id}`);
-      logger.error(e);
-      throw e;
+      logger.error(`Could not load data for user with psid ${event.sender.id}: ${e}`);
+      throw e; // Break the cycle
     }
 
     //NLProcess
@@ -31,21 +32,13 @@ module.exports = {
       nlpResponse = await naturalLanguageProcessor.process(event, userData);
     } catch (e) {
       logger.error(e);
-      throw e;
+      throw e; // Break the cycle
     }
 
-    //Convert Response to PlatformResponse and Send the Response
+    // Store Data and send response IN PARALLEL
     // NOTE: Do not wait if it is sent, do this async.
-    parallelPromises.push(channel.sendResponse(event, userData, nlpResponse));
-
-    //Store the needed User Data
-    userData.lastMessage = event.postback
-      ? event.postback.payload
-      : event.message.text
-        ? event.message.text
-        : event.message.attachments[0].type.toUpperCase();
     parallelPromises.push(this.storeUserData(userData));
-
+    parallelPromises.push(channel.sendResponse(event, userData, nlpResponse));
     await Promise.all(parallelPromises).catch(e => {
       logger.error(e);
     });
@@ -59,6 +52,7 @@ module.exports = {
       userData = await UserModel.findByPSID(event.sender.id);
     } catch (e) {
       logger.error(`Error while finding user on DB: ${e}`);
+      throw e;
     }
 
     //TODO: Every day fetch the user data
@@ -82,6 +76,14 @@ module.exports = {
         logger.error(`Error retrieving new user data from channel: ${e}`);
       }
     }
+
+    // Store Last Message
+    //Store the needed User Data
+    userData.lastMessage = event.postback
+      ? event.postback.payload
+      : event.message.text
+        ? event.message.text
+        : event.message.attachments[0].type.toUpperCase();
 
     return userData;
   },
