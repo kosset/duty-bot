@@ -72,7 +72,7 @@ router.post(["/facebook", "/facebook/"], function(req, res) {
       let webhook_event = entry.messaging[0];
       webhook_event.channel = "facebook";
 
-      logger.info(`Webhook got event: ${JSON.stringify(webhook_event)}`);
+      logger.debug(`Webhook got event: ${JSON.stringify(webhook_event)}`);
 
       // Async functionality
       //TODO: Handle the event

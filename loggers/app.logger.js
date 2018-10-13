@@ -4,6 +4,9 @@ const
 
 require("winston-daily-rotate-file");
 
+/**
+ * @type {module:inspector.Console | winston.ConsoleTransportInstance | Console}
+ */
 const consoleTransport = new winston.transports.Console({
   format: winston.format.combine(
     winston.format.printf(
@@ -15,7 +18,11 @@ const consoleTransport = new winston.transports.Console({
   humanReadableUnhandledException: true,
   exitOnError: false
 });
+winston.add(consoleTransport);
 
+/**
+ * @type {DailyRotateFileTransportInstance}
+ */
 const fileTransport = new winston.transports.DailyRotateFile({
   format: winston.format.combine(
     winston.format.timestamp(),
@@ -29,11 +36,9 @@ const fileTransport = new winston.transports.DailyRotateFile({
   handleExceptions: true,
   maxFiles: `${config.get('logging.file.max_files')}d`
 });
+winston.add(fileTransport);
 
-//TODO: Create a new transport for ERRORs, saving them in the DB
+//TODO: Create a new transport for Loggly
 
-const loggerOptions = {
-  transports: [consoleTransport, fileTransport]
-};
-
-module.exports = winston.createLogger(loggerOptions);
+// Export Logger
+module.exports = winston;
