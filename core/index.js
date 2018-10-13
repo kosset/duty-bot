@@ -21,6 +21,7 @@ module.exports = {
       userData = await this.loadUserData(event, channel);
       logger.debug(`User data loaded: ${JSON.stringify(userData)}`);
     } catch (e) {
+      logger.warn(`Could not load data for user with psid ${event.sender.id}`);
       logger.error(e);
       throw e;
     }
@@ -57,7 +58,7 @@ module.exports = {
     try {
       userData = await UserModel.findByPSID(event.sender.id);
     } catch (e) {
-      logger.error(e);
+      logger.error(`Error while finding user on DB: ${e}`);
     }
 
     //TODO: Every day fetch the user data
@@ -78,7 +79,7 @@ module.exports = {
         // await newUserData.save();
         userData = newUserData;
       } catch (e) {
-        logger.error(e);
+        logger.error(`Error retrieving new user data from channel: ${e}`);
       }
     }
 

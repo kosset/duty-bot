@@ -10,6 +10,8 @@ module.exports = class FacebookChannel {
     this.client = new Client(token, graphVersion);
     this.convert = new Converter();
     this.genderizeClient = new GenderClient();
+
+    logger.info(`New Facebook channel created`);
   }
 
   async retrieveNewUserData(event) {
@@ -20,15 +22,23 @@ module.exports = class FacebookChannel {
       data = await this.client.getUserProfileFields(
         event.sender.id
       );
+    } catch (e) {
+      logger.error(`Could not get User Profile Fields from FB: ${e}`);
+      throw e;
+    }
 
-      if (data.gender) {
+    // Request gender of the user
+    try {
+      if (!data.gender) {
         const genderRes = await this.genderizeClient.getGenderByName(data.first_name);
         data.gender = genderRes.gender;
       }
-
     } catch (e) {
+      logger.error(`Could not get User gender by name from genderize: ${e}`);
       throw e;
     }
+
+    return data;
 
     //TODO: Convert data to specific schema
     //TODO: Return as many data as possible

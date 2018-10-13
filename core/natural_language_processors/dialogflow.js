@@ -13,6 +13,8 @@ module.exports = class Dialogflow {
         client_email: clientEmail
       }
     });
+
+    logger.info(`New NLP for Dialogflow created`);
   }
 
   async process(event, userData) {
