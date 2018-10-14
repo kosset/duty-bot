@@ -1,10 +1,6 @@
 module.exports = class FacebookConverter {
   constructor() {}
 
-  toEvent(rawEvent) {
-    return rawEvent;
-  }
-
   toTypingDelayInMilliSec(response) {
     let delayInMilliSec = 50;
 

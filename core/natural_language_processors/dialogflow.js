@@ -37,6 +37,8 @@ module.exports = class Dialogflow {
       sessionPath: that.sessionClient.sessionPath(that.projectId, sessionId)
     };
 
+    //TODO: Create CUSTOM Contexts for sharing data with the agent
+
     const request = that.convert.toTextRequest(userTextInput, userData, reqOptions);
 
     try {
@@ -64,6 +66,7 @@ module.exports = class Dialogflow {
 
   async analyzeResult(userData) {
     //TODO: Store Params
+    //TODO: Store output CONTEXTS
 
     //TODO: Call actions
 
