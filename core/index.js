@@ -67,6 +67,7 @@ module.exports = {
     const shouldFetchData =
       !userData ||
       (userData &&
+        userData.fetchedAt &&
         Date.now() - userData.fetchedAt.getTime() > 24 * 60 * 60 * 1000);
     if (shouldFetchData) {
       // Build new/updated User Data
