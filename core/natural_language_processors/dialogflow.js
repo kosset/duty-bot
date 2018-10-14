@@ -3,6 +3,7 @@ const Converter = require("../converters").Dialogflow;
 const logger = require('../../loggers').appLogger;
 
 module.exports = class Dialogflow {
+
   constructor(projectId, language, privateKey, clientEmail) {
     this.projectId = projectId;
     this.languageCode = language;
@@ -14,26 +15,33 @@ module.exports = class Dialogflow {
       }
     });
 
+    this._fulfillment = {};
+
     logger.info(`New NLP for Dialogflow created`);
   }
 
-  async process(event, userData) {
+  get fulfillment() {
+    return this._fulfillment;
+  }
+
+  set fulfillment(value) {
+    this._fulfillment = value;
+  }
+
+  async process(userTextInput, userData) {
     const that = this;
 
-    const sessionId = userData.id;
+    const sessionId = userData.id; // It's the mongo ID in string
     const reqOptions = {
       language: that.languageCode,
       sessionPath: that.sessionClient.sessionPath(that.projectId, sessionId)
     };
 
-    const request = that.convert.toRequest(event, userData, reqOptions);
+    const request = that.convert.toTextRequest(userTextInput, userData, reqOptions);
 
     try {
-      if (request) {
-        const result = await that.detectIntent(request);
-        await that.analyzeResult(event, userData, result);
-        return result;
-      }
+      that.fulfillment = await that.detectIntent(request);
+      await that.analyzeResult(userData);
     } catch (e) {
       throw e;
     }
@@ -54,8 +62,16 @@ module.exports = class Dialogflow {
     }
   }
 
-  async analyzeResult(event, userData, result) {
+  async analyzeResult(userData) {
+    //TODO: Store Params
+
+    //TODO: Call actions
+
     //TODO: Build the jumps (conditional and unconditional)
     //TODO: Enrich/Update userData etc
+  }
+
+  getFacebookResponse(userData) {
+    return this.convert.toFacebookResponse(userData, this.fulfillment);
   }
 };

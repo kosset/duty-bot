@@ -7,83 +7,79 @@ module.exports = {
     channel,
     naturalLanguageProcessor
   ) {
-    let event,
-      userData,
-      nlpResponse,
+    let userData,
       parallelPromises = [];
 
     // Accept-Expect: Text, attachments, attachments and text (links), postback
-    event = channel.convert.toEvent(rawEvent); //TODO: [OPTIONAL] Convert Incoming Response to An Event
+    channel.event = rawEvent;
 
-    // TODO: Make it channelWise not ClientWise
-    channel.client.sendMarkAsSeen(event.sender.id);
+    // Let user know that the bot got her response
+    channel.markAsSeen().catch(e => logger.error(e));
 
     // Load User Data
     try {
-      userData = await this.loadUserData(event, channel);
+      userData = await this.loadUserData(channel);
       logger.debug(`User data loaded: ${JSON.stringify(userData)}`);
     } catch (e) {
-      logger.error(`Could not load data for user with psid ${event.sender.id}: ${e}`);
+      logger.error(
+        `Could not load data for user with psid ${channel.userPSID}: ${e}`
+      );
       throw e; // Break the cycle
     }
 
-    //NLProcess
     try {
-      nlpResponse = await naturalLanguageProcessor.process(event, userData);
+      // Natural Language Process
+      if (channel.userTextInput) {
+        await naturalLanguageProcessor.process(channel.userTextInput, userData);
+        parallelPromises.push(
+          channel.sendResponse(userData, naturalLanguageProcessor)
+        );
+      } else {
+        //TODO: Handle all other incoming events and send custom Responses
+      }
     } catch (e) {
       logger.error(e);
       throw e; // Break the cycle
     }
 
-    // Store Data and send response IN PARALLEL
-    // NOTE: Do not wait if it is sent, do this async.
-    parallelPromises.push(this.storeUserData(userData));
-    parallelPromises.push(channel.sendResponse(event, userData, nlpResponse));
-    await Promise.all(parallelPromises).catch(e => {
+    try {
+      // Store Data and send response IN PARALLEL
+      // NOTE: Do not wait if it is sent, do this async.
+      parallelPromises.push(this.storeUserData(userData));
+      await Promise.all(parallelPromises);
+    } catch (e) {
       logger.error(e);
-    });
+    }
   },
 
-  loadUserData: async function(event, channel) {
-    let userData, retrievedData, newUserData;
+  loadUserData: async function(channel) {
+    let userData, retrievedData;
 
     //Fetch from the DB the correct stored data
     try {
-      userData = await UserModel.findByPSID(event.sender.id);
+      userData = await UserModel.findByPSID(channel.userPSID);
     } catch (e) {
       logger.error(`Error while finding user on DB: ${e}`);
       throw e;
     }
 
-    //TODO: Every day fetch the user data
-    if (!userData) {
-      // Build new User Data
+    // Every day fetch the user data
+    const shouldFetchData =
+      !userData ||
+      (userData &&
+        Date.now() - userData.fetchedAt.getTime() > 24 * 60 * 60 * 1000);
+    if (shouldFetchData) {
+      // Build new/updated User Data
       try {
-        retrievedData = await channel.retrieveNewUserData(event);
-        // Store those new Data
-        newUserData = new UserModel({
-          psid: event.sender.id, // Platform Scoped ID
-          name: {
-            first: retrievedData.first_name,
-            last: retrievedData.last_name
-          },
-          channel: event.channel,
-          gender: retrievedData.gender
-        });
-        // await newUserData.save();
-        userData = newUserData;
+        retrievedData = await channel.retrieveNewUserData();
+        userData = new UserModel(retrievedData);
       } catch (e) {
         logger.error(`Error retrieving new user data from channel: ${e}`);
       }
     }
 
     // Store Last Message
-    //Store the needed User Data
-    userData.lastMessage = event.postback
-      ? event.postback.payload
-      : event.message.text
-        ? event.message.text
-        : event.message.attachments[0].type.toUpperCase();
+    userData.lastMessage = channel.userLastMessage;
 
     return userData;
   },
