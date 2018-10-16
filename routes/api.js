@@ -14,12 +14,12 @@ const fbChannel = new channels.Facebook(
     config.get("facebook.page_access_token"),
     config.get("facebook.graph_version")
   ),
-  dialogflow = new nlp.Dialogflow(
-    config.get("dialogflow.project_id"),
-    config.get("dialogflow.lang"),
-    config.get("dialogflow.private_key"),
-    config.get("dialogflow.client_email")
-  );
+  dialogflow = new nlp.Dialogflow({
+    projectId: config.get("dialogflow.project_id"),
+    language: config.get("dialogflow.lang"),
+    privateKey: config.get("dialogflow.private_key"),
+    clientEmail: config.get("dialogflow.client_email")
+  });
 
 router.get("/", function(req, res) {
   let api_resources = {

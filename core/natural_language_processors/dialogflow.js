@@ -1,19 +1,22 @@
 const dialogflow = require("dialogflow");
 const Converter = require("../converters").Dialogflow;
 const logger = require('../../loggers').appLogger;
+const misc = require("../../utils/misc");
 
 module.exports = class Dialogflow {
 
-  constructor(projectId, language, privateKey, clientEmail) {
-    this.projectId = projectId;
-    this.languageCode = language;
+  constructor(auth, domainModule) {
+    this.projectId = auth.projectId;
+    this.languageCode = auth.language;
     this.convert = new Converter();
     this.sessionClient = new dialogflow.SessionsClient({
       credentials: {
-        private_key: privateKey,
-        client_email: clientEmail
+        private_key: auth.privateKey,
+        client_email: auth.clientEmail
       }
     });
+
+    this.domainModule = domainModule;
 
     this._fulfillment = {};
 
@@ -28,7 +31,7 @@ module.exports = class Dialogflow {
     this._fulfillment = value;
   }
 
-  async process(userTextInput, userData) {
+  async process(input, userData, type = 'text') {
     const that = this;
 
     const sessionId = userData.id; // It's the mongo ID in string
@@ -37,9 +40,8 @@ module.exports = class Dialogflow {
       sessionPath: that.sessionClient.sessionPath(that.projectId, sessionId)
     };
 
-    //TODO: Create CUSTOM Contexts for sharing data with the agent
-
-    const request = that.convert.toTextRequest(userTextInput, userData, reqOptions);
+    let request = that.convert.toTextRequest(input, userData, reqOptions);
+    if (type === 'event') request = that.convert.toEventRequest(input, userData, reqOptions);
 
     try {
       that.fulfillment = await that.detectIntent(request);
@@ -65,13 +67,34 @@ module.exports = class Dialogflow {
   }
 
   async analyzeResult(userData) {
-    //TODO: Store Params
-    //TODO: Store output CONTEXTS
+    let that = this;
 
-    //TODO: Call actions
+    // Store/Update Params
+    userData.domainData = that.fulfillment.parameters;
+    const paramNames = Object.keys(that.fulfillment.parameters);
+    paramNames.forEach(paramName => {
+      if (paramName !== 'jumpTo') {
+        userData.domainData[paramName] = that.fulfillment.parameters[paramName];
+      }
+    }); //TODO: Let mongoose know that something updated
 
-    //TODO: Build the jumps (conditional and unconditional)
-    //TODO: Enrich/Update userData etc
+    // Store output CONTEXTS
+    userData.contexts = that.fulfillment.outputContexts;
+
+    // Call actions
+    const actionsInString = that.fulfillment.action;
+    const actionsInArray = actionsInString.split(',');
+    await misc.asyncForEach(actionsInArray, async action => {
+      if (typeof that.domainModule.actions[action] === "function") {
+        await that.domainModule.actions[action](userData);
+      }
+    });  //TODO: Let mongoose know that something updated
+
+    // Build the jumps (conditional and unconditional)
+    if ('jumpTo' in that.fulfillment.parameters) {
+      let eventName = that.fulfillment.parameters.jumpTo;
+      await that.process(eventName,userData,'event');
+    }
   }
 
   getFacebookResponse(userData) {

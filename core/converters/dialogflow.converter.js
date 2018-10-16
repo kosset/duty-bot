@@ -3,6 +3,8 @@ module.exports = class DialogflowConverter {
   constructor() {}
 
   toTextRequest(userTextInput, userData, moreOpts) {
+    let that = this;
+
     return {
       session: moreOpts.sessionPath,
       queryInput: {
@@ -10,8 +12,45 @@ module.exports = class DialogflowConverter {
           text: userTextInput,
           languageCode: moreOpts.language
         }
+      },
+      queryParams: {
+        resetContexts: false,
+        contexts: that.toDialogflowContexts(userData)
       }
     };
+  }
+
+  toEventRequest(name, userData, moreOpts) {
+    let that = this;
+
+    return {
+      session: moreOpts.sessionPath,
+      queryInput: {
+        event: {
+          name: name,
+          languageCode: moreOpts.language
+        }
+      },
+      queryParams: {
+        resetContexts: false,
+        contexts: that.toDialogflowContexts(userData)
+      }
+    };
+  }
+
+  toDialogflowContexts(userData) {
+    let dfContexts = userData.contexts;
+    dfContexts.push({
+      name: 'USER',
+      lifespanCount: 0, // Contexts expire automatically after 20 minutes even if there are no matching queries.
+      parameters: {
+        firstName: userData.name.first,
+        lastName: userData.name.last,
+        fullName: userData.name.full,
+        otherData: userData.domainData
+      }
+    });
+    return dfContexts;
   }
 
   toFacebookResponse(userData, nlpResponse) {
