@@ -40,6 +40,8 @@ module.exports = class DialogflowConverter {
 
   toDialogflowContexts(userData) {
     let dfContexts = userData.contexts;
+    //TODO: Create Contexts for Required and Undefined domainData [age, weight, height, etc]
+    //TODO: Thus, the user cannot continue without answering
     dfContexts.push({
       name: 'USER',
       lifespanCount: 0, // Contexts expire automatically after 20 minutes even if there are no matching queries.
