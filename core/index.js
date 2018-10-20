@@ -10,7 +10,7 @@ module.exports = {
     let userData,
       parallelPromises = [];
 
-    // Accept-Expect: Text, attachments, attachments and text (links), postback
+    // Load the channel with its event
     channel.event = rawEvent;
 
     // Let user know that the bot got her response
@@ -26,6 +26,7 @@ module.exports = {
       );
       throw e; // Break the cycle
     }
+
 
     try {
       // Natural Language Process

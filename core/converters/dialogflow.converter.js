@@ -1,6 +1,8 @@
 module.exports = class DialogflowConverter {
 
-  constructor() {}
+  constructor(domainModule) {
+    this.domainModule = domainModule;
+  }
 
   toTextRequest(userTextInput, userData, moreOpts) {
     let that = this;
@@ -39,11 +41,23 @@ module.exports = class DialogflowConverter {
   }
 
   toDialogflowContexts(userData) {
+    const domainModule = this.domainModule;
     let dfContexts = userData.contexts;
-    //TODO: Create Contexts for Required and Undefined domainData [age, weight, height, etc]
-    //TODO: Thus, the user cannot continue without answering
+
+    // Create Contexts for Required and Undefined domainData [e.g. age, weight, height, etc]
+    // Thus, the user cannot continue without answering
+    if ('contexts' in domainModule && 'requiredData' in domainModule.contexts) {
+      const mustHavePropsContexts = domainModule.contexts.requiredData(userData.domainData);
+      mustHavePropsContexts.forEach(domainContextName => {
+        dfContexts.push({
+          name: domainContextName,
+          lifespanCount: 0, // Contexts expire automatically after 20 minutes even if there are no matching queries.
+        })
+      });
+    }
+
     dfContexts.push({
-      name: 'USER',
+      name: 'user',
       lifespanCount: 0, // Contexts expire automatically after 20 minutes even if there are no matching queries.
       parameters: {
         firstName: userData.name.first,

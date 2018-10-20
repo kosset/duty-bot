@@ -8,15 +8,14 @@ module.exports = class Dialogflow {
   constructor(auth, domainModule) {
     this.projectId = auth.projectId;
     this.languageCode = auth.language;
-    this.convert = new Converter();
+    this.domainModule = domainModule;
+    this.convert = new Converter(domainModule);
     this.sessionClient = new dialogflow.SessionsClient({
       credentials: {
         private_key: auth.privateKey,
         client_email: auth.clientEmail
       }
     });
-
-    this.domainModule = domainModule;
 
     this._fulfillment = {};
 
@@ -82,13 +81,15 @@ module.exports = class Dialogflow {
     userData.contexts = that.fulfillment.outputContexts;
 
     // Call actions
-    const actionsInString = that.fulfillment.action;
-    const actionsInArray = actionsInString.split(',');
-    await misc.asyncForEach(actionsInArray, async action => {
-      if (typeof that.domainModule.actions[action] === "function") {
-        await that.domainModule.actions[action](userData);
-      }
-    });  //TODO: Let mongoose know that something updated
+    if ('actions' in that.domainModule) {
+      const actionsInString = that.fulfillment.action;
+      const actionsInArray = actionsInString.split(',');
+      await misc.asyncForEach(actionsInArray, async action => {
+        if (typeof that.domainModule.actions[action] === "function") {
+          await that.domainModule.actions[action](userData);
+        }
+      });  //TODO: Let mongoose know that something updated
+    }
 
     // Build the jumps (conditional and unconditional)
     if ('jumpTo' in that.fulfillment.parameters) {
