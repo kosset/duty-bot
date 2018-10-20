@@ -3,7 +3,8 @@ const express = require("express"),
   logger = require("../loggers").appLogger,
   core = require("../core"),
   channels = require("../core/channels"),
-  nlp = require("../core/natural_language_processors");
+  nlp = require("../core/natural_language_processors"),
+  domain = require("../domain");
 
 const router = express.Router();
 
@@ -19,7 +20,7 @@ const fbChannel = new channels.Facebook(
     language: config.get("dialogflow.lang"),
     privateKey: config.get("dialogflow.private_key"),
     clientEmail: config.get("dialogflow.client_email")
-  });
+  }, domain);
 
 router.get("/", function(req, res) {
   let api_resources = {
