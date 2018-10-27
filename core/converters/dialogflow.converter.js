@@ -1,7 +1,16 @@
 module.exports = class DialogflowConverter {
+  get sessionId() {
+    return this._sessionId;
+  }
 
-  constructor(domainModule) {
+  set sessionId(value) {
+    this._sessionId = value;
+  }
+
+  constructor(projectId, domainModule) {
     this.domainModule = domainModule;
+    this.projectId = projectId;
+    this._sessionId = '';
   }
 
   toTextRequest(userTextInput, userData, moreOpts) {
@@ -16,7 +25,6 @@ module.exports = class DialogflowConverter {
         }
       },
       queryParams: {
-        resetContexts: false,
         contexts: that.toDialogflowContexts(userData)
       }
     };
@@ -34,39 +42,53 @@ module.exports = class DialogflowConverter {
         }
       },
       queryParams: {
-        resetContexts: false,
         contexts: that.toDialogflowContexts(userData)
       }
     };
   }
 
   toDialogflowContexts(userData) {
+    const that = this;
     const domainModule = this.domainModule;
     let dfContexts = userData.contexts;
 
     // Create Contexts for Required and Undefined domainData [e.g. age, weight, height, etc]
     // Thus, the user cannot continue without answering
-    if ('contexts' in domainModule && 'requiredData' in domainModule.contexts) {
+    if ('contexts' in domainModule && 'requiredData' in domainModule.contexts && userData.domainData) {
       const mustHavePropsContexts = domainModule.contexts.requiredData(userData.domainData);
       mustHavePropsContexts.forEach(domainContextName => {
         dfContexts.push({
-          name: domainContextName,
+          name: that.getContextPath(domainContextName),
           lifespanCount: 0, // Contexts expire automatically after 20 minutes even if there are no matching queries.
         })
       });
     }
 
     dfContexts.push({
-      name: 'user',
-      lifespanCount: 0, // Contexts expire automatically after 20 minutes even if there are no matching queries.
+      name: that.getContextPath('user'),
+      lifespanCount: 1, // Contexts expire automatically after 20 minutes even if there are no matching queries.
       parameters: {
-        firstName: userData.name.first,
-        lastName: userData.name.last,
-        fullName: userData.name.full,
-        otherData: userData.domainData
+        fields: {
+          firstName: {
+            stringValue: userData.name.first,
+            kind: 'stringValue'
+          },
+          lastName: {
+            stringValue: userData.name.last,
+            kind: 'stringValue'
+          },
+          fullName: {
+            stringValue: userData.name.full,
+            kind: 'stringValue'
+          }
+        },
       }
     });
     return dfContexts;
+  }
+
+  getContextPath(contextName) {
+    return `projects/${this.projectId}/agent/sessions/${this.sessionId}/contexts/${contextName}`;
   }
 
   toFacebookResponse(userData, nlpResponse) {
