@@ -151,7 +151,7 @@ module.exports = class DialogflowConverter {
                 id: psid
               },
               message: {
-                text: msg.title,
+                text: msg.quickReplies.title,
                 quick_replies: msg.quickReplies.quickReplies.map(qr => {
                   return {
                     content_type: "text",
