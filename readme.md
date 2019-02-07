@@ -1,1 +1,1 @@
-# Hygieia - Your fitness partner
+# A bot framework from a developer for developers
