@@ -13,7 +13,11 @@ const userSchema = new Schema(
     gender: { type: String, enum: ['male', 'female', 'unknown'], default: 'unknown' },
     channel: { type: String, enum: ['facebook'] },
     domainData: {}, // Data stored from parameters
-    contexts: [], // Dialogflow contexts and custom backend contexts
+    contexts: [{
+      name: String,
+      lifespan: Number,
+      activeUntil: {type: Date, default: new Date(Date.now() + 24*60*60*1000)}
+    }], // Preconditions for Nodes
     fetchedAt: Date
   },
   {
@@ -35,6 +39,40 @@ userSchema
     this.name.first = v.substr(0, v.indexOf(" "));
     this.name.last = v.substr(v.indexOf(" ") + 1);
   });
+
+userSchema.methods.getActiveContexts = function() {
+  let activeContexts = [];
+
+  for (let context of this.contexts)  {
+    if (context.activeUntil > Date.now()) {
+      activeContexts.push(context.name);
+    }
+  }
+  return activeContexts;
+};
+
+userSchema.methods.setActiveContexts = function(newContexts) {
+  let contextsReadyToBeStored = [];
+
+  // Decrease the lifespan of the old Contexts
+  for (let context of this.contexts) {
+    context.lifespan--;
+    if (context.lifespan > 0) contextsReadyToBeStored.push(context)
+  }
+
+  // Store new incoming contexts
+  const nCNs = Object.keys(newContexts);
+  for (let newContextName of nCNs) {
+    if (newContexts[newContextName] > 0) {
+      contextsReadyToBeStored.push({
+        name: newContextName,
+        lifespan: newContexts[newContextName]
+      });
+    }
+  }
+
+  this.contexts = contextsReadyToBeStored;
+};
 
 // Statics
 // Do not declare statics using ES6 arrow functions (=>).

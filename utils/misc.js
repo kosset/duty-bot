@@ -8,5 +8,6 @@ module.exports = {
 
   timeout: ms => new Promise(res => setTimeout(res, ms)),
 
+  chooseRandom: myArray => myArray[Math.floor(Math.random() * myArray.length)],
 
 };

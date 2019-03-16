@@ -1,3 +1,3 @@
 module.exports = {
-  Dialogflow: require('./dialogflow')
+  Dialogflow: require('./dialogflow.nlp')
 }

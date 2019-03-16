@@ -1,6 +1,5 @@
 const
   Client = require("../clients/facebook.client"),
-  Converter = require("../converters").Facebook,
   GenderClient = require("../clients/genderize.client"),
   misc = require('../../utils/misc'),
   logger = require('../../loggers').appLogger;
@@ -9,7 +8,6 @@ module.exports = class FacebookChannel {
 
   constructor(token, graphVersion) {
     this.client = new Client(token, graphVersion);
-    this.convert = new Converter();
     this.genderizeClient = new GenderClient();
 
     this._event = {};
@@ -81,15 +79,15 @@ module.exports = class FacebookChannel {
     };
   }
 
-  async sendResponse(userData, NLP) {
+  async sendResponse(nodeResponses, userData) {
     const that = this;
 
     try {
-      const responseData = NLP.getFacebookResponse(userData);
+      const responseData = that.toFacebookResponse(nodeResponses, userData); //TODO: Convert botResponses to responseData for facebook
       await misc.asyncForEach(responseData, async (res) => {
         logger.debug(`Sending response back to fb: ${JSON.stringify(res)}`);
         await that.client.sendTypingIndicator(that.userPSID);
-        await misc.timeout(that.convert.toTypingDelayInMilliSec(res));
+        await misc.timeout(that.toTypingDelayInMilliSec(res));
         await that.client.sendResponseMessage(res);
       });
     } catch (e) {
@@ -99,5 +97,105 @@ module.exports = class FacebookChannel {
 
   markAsSeen() {
     return this.client.sendMarkAsSeen(this.event.sender.id);
+  }
+
+  toTypingDelayInMilliSec(response) {
+    let delayInMilliSec = 50;
+
+    if (response.message && response.message.text) {
+      delayInMilliSec += response.message.text.length * 20;
+    }
+
+    return (delayInMilliSec > 1500) ? 1500 : delayInMilliSec;
+  }
+
+  toFacebookResponse(nodeResponses, userData) {
+    const psid = userData.psid;
+
+    // Iterating in nodeResponses create the list of FacebookResponses
+    return nodeResponses.map(function (response) {
+      switch (response.type) {
+        case 'text':
+          return {
+            messaging_type: "RESPONSE",
+            recipient: {
+              id: psid
+            },
+            message: {
+              text: misc.chooseRandom(response.options)
+            }
+          };
+        case 'quickReplies':
+          return {
+            messaging_type: "RESPONSE",
+            recipient: {
+              id: psid
+            },
+            message: {
+              text: misc.chooseRandom(response.questions),
+              quick_replies: response.replies.map(qr => {
+                return {
+                  content_type: "text",
+                  title: qr.length > 20 ? "ERROR: Wrong Length" : qr,
+                  payload: qr
+                };
+              })
+            }
+          };
+        case 'cardslist':
+        case 'card':
+          return {
+            messaging_type: "RESPONSE",
+            recipient:{
+              id: psid
+            },
+            message:{
+              attachment:{
+                type:"template",
+                payload:{
+                  template_type:"generic",
+                  elements:[
+                    {
+                      title: response.title || `Card's Title`,
+                      image_url: response.imageUrl,
+                      subtitle: response.subtitle,
+                      buttons: response.buttons.map(btn => {
+                        if (btn.payload.startsWith('http')) {
+                          return {
+                            type: "web_url",
+                            url: btn.postback,
+                            title: btn.text
+                          };
+                        } else {
+                          return {
+                            type: "postback",
+                            title: btn.postback,
+                            payload: btn.postback
+                          };
+                        }
+                      })
+                    }
+                  ]
+                }
+              }
+            }
+          };
+        case 'location':
+          return {
+            messaging_type: "RESPONSE",
+            recipient: {
+              id: psid
+            },
+            message: {
+              text: misc.chooseRandom(response.questions),
+              quick_replies: [{
+                content_type:"location"
+              }]
+            }
+          };
+        default:
+          break;
+      }
+    });
   }
 };

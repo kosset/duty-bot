@@ -21,9 +21,7 @@ module.exports = {
       userData = await this.loadUserData(channel);
       logger.debug(`User data loaded: ${JSON.stringify(userData)}`);
     } catch (e) {
-      logger.error(
-        `Could not load data for user with psid ${channel.userPSID}: ${e}`
-      );
+      logger.error( `Could not load data for user with psid ${channel.userPSID}: ${e}`);
       throw e; // Break the cycle
     }
 
@@ -31,9 +29,9 @@ module.exports = {
     try {
       // Natural Language Process
       if (channel.userTextInput) {
-        await naturalLanguageProcessor.process(channel.userTextInput, userData);
+        const nodeResponses = await naturalLanguageProcessor.process(channel.userTextInput, userData);
         parallelPromises.push(
-          channel.sendResponse(userData, naturalLanguageProcessor)
+          channel.sendResponse(nodeResponses, userData)
         );
       } else {
         //TODO: Handle all other incoming events and send custom Responses

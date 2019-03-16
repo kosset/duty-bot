@@ -1,0 +1,9 @@
+{
+  "DEFAULT_NODE": {
+    "intents": ["Default Fallback"],
+    "preConditions": [],
+    "postConditions": {},
+    "actions": [],
+    "responses": []
+  }
+}
