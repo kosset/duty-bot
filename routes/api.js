@@ -20,7 +20,7 @@ const fbChannel = new channels.Facebook(
     language: config.get("dialogflow.lang"),
     privateKey: config.get("dialogflow.private_key"),
     clientEmail: config.get("dialogflow.client_email")
-  }, domain);
+  }, require('../conversational_nodes/default'));
 
 router.get("/", function(req, res) {
   let api_resources = {

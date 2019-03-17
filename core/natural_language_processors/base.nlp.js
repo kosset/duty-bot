@@ -1,8 +1,10 @@
+const logger = require("../../loggers").appLogger;
+
 module.exports = class BaseNLP {
 
-  constructor(pathOfNodes) {
+  constructor(nodes) {
     //Load Nodes
-    this.nodes = require(pathOfNodes);
+    this.nodes = nodes;
     this.nodesGroupedByIntentName = this.groupNodesByIntentName(); // Map
   }
 
@@ -37,12 +39,14 @@ module.exports = class BaseNLP {
     try {
       triggeredIntentName = await that.detectIntent(input, userData);
       if (triggeredIntentName) triggeredIntentName = 'Default Fallback';
+      logger.debug(`Intent with name '${triggeredIntentName}' was triggered`);
     } catch (e) {
       throw e;
     }
 
     // Find the best matching Node
     matchedNode = that.findBestNode(triggeredIntentName, userData);
+    logger.debug(`Matched Node: ${JSON.stringify(matchedNode)}`);
 
     //TODO: Invoke Actions
 

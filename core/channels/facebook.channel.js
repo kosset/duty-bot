@@ -51,7 +51,7 @@ module.exports = class FacebookChannel {
     try {
       data = await that.client.getUserProfileFields(that.userPSID);
     } catch (e) {
-      logger.error(`Could not get User Profile Fields from FB: ${e}`);
+      logger.error(`Could not get User Profile Fields from FB: ${JSON.stringify(e)}`);
       throw e;
     }
 

@@ -4,6 +4,20 @@
     "preConditions": [],
     "postConditions": {},
     "actions": [],
-    "responses": []
+    "responses": [
+      {
+        "type": "text",
+        "options": [
+          "I'm sorry, I couldn't get that.",
+          "I'm sorry, but I haven't been developed to answer that."
+        ]
+      },
+      {
+        "type": "text",
+        "options": [
+          "Why don't you try something else? :D"
+        ]
+      }
+    ]
   }
 }
