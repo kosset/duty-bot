@@ -20,7 +20,16 @@ const fbChannel = new channels.Facebook(
     language: config.get("dialogflow.lang"),
     privateKey: config.get("dialogflow.private_key"),
     clientEmail: config.get("dialogflow.client_email")
-  }, require('../conversational_nodes/default'));
+    },
+    require('../conversational_nodes/default'),
+    domain
+  ),
+  wit = new nlp.Wit({
+      token: config.get("wit.token")
+    },
+    require('../conversational_nodes/default'),
+    domain
+  );
 
 router.get("/", function(req, res) {
   let api_resources = {
@@ -77,7 +86,7 @@ router.post(["/facebook", "/facebook/"], function(req, res) {
 
       // Async functionality
       //TODO: Handle the event
-      core.manageWebhookEvent(webhook_event, fbChannel, dialogflow);
+      core.manageWebhookEvent(webhook_event, fbChannel, wit);
     });
 
     // Returns a '200 OK' response to all requests

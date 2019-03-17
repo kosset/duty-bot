@@ -7,7 +7,7 @@ module.exports = class BaseNLP {
     //Load Nodes
     this.nodes = nodes;
     this.nodesGroupedByIntentName = this.groupNodesByIntentName(); // Map
-
+    logger.debug(JSON.stringify(this.nodesGroupedByIntentName));
     this.domainModule = domain;
   }
 
@@ -45,7 +45,7 @@ module.exports = class BaseNLP {
     //Detect Intent
     try {
       triggeredIntentName = await that.detectIntent(input, userData);
-      if (triggeredIntentName) triggeredIntentName = 'Default Fallback';
+      if (!triggeredIntentName) triggeredIntentName = 'Default Fallback';
       logger.debug(`Intent with name '${triggeredIntentName}' was triggered`);
     } catch (e) {
       throw e;
@@ -75,7 +75,8 @@ module.exports = class BaseNLP {
     let bestNode, bestScore = 0;
 
     // Check Preconditions of Nodes
-    const groupedNodes = this.nodesGroupedByIntentName[triggeredIntentName];
+    let groupedNodes = this.nodesGroupedByIntentName[triggeredIntentName];
+    if (!groupedNodes) groupedNodes = this.nodesGroupedByIntentName['Default Fallback'];
     for (let possibleNode of groupedNodes) {
 
       // inter will store the intersection of the input contexts array and the currently active contexts.

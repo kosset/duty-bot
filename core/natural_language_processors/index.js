@@ -1,3 +1,4 @@
 module.exports = {
-  Dialogflow: require('./dialogflow.nlp')
+  Dialogflow: require('./dialogflow.nlp'),
+  Wit: require('./wit.nlp')
 }

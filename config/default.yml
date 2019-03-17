@@ -29,3 +29,7 @@ dialogflow:
   private_key:
   client_email:
   lang: en
+
+# Wit.AI
+wit:
+  token:
