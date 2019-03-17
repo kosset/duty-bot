@@ -1,11 +1,14 @@
 const logger = require("../../loggers").appLogger;
+const misc = require("../../utils/misc");
 
 module.exports = class BaseNLP {
 
-  constructor(nodes) {
+  constructor(nodes, domain) {
     //Load Nodes
     this.nodes = nodes;
     this.nodesGroupedByIntentName = this.groupNodesByIntentName(); // Map
+
+    this.domainModule = domain;
   }
 
   groupNodesByIntentName() {
@@ -48,11 +51,15 @@ module.exports = class BaseNLP {
     matchedNode = that.findBestNode(triggeredIntentName, userData);
     logger.debug(`Matched Node: ${JSON.stringify(matchedNode)}`);
 
-    //TODO: Invoke Actions
+    // Invoke Actions
+    try {
+      await that.callActions(matchedNode, userData);
+    } catch (e) {
+      logger.error(`Actions failed: ${e}`);
+    }
 
     // Return BotResponses
     return matchedNode.responses;
-
   }
 
   findBestNode(triggeredIntentName, userData) {
@@ -89,5 +96,20 @@ module.exports = class BaseNLP {
     }
 
     return bestNode;
+  }
+
+  async callActions(matchedNode, userData) {
+    const that = this;
+    if ("actions" in matchedNode) {
+      try {
+        await misc.asyncForEach(matchedNode.actions, async action => {
+          if (typeof that.domainModule.actions[action] === "function") {
+            await that.domainModule.actions[action](userData);
+          }
+        }); //TODO: Let mongoose know that something updated
+      } catch (e) {
+        throw e;
+      }
+    }
   }
 };
