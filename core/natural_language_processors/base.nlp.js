@@ -33,6 +33,10 @@ module.exports = class BaseNLP {
      throw new Error(`The used NLProcessor does not have implemented the 'detectIntent' method`);
   }
 
+  retrieveParameters(userDomainData) {
+    throw new Error(`The used NLProcessor does not have implemented the 'retrieveParameters' method`);
+  }
+
   async process(input, userData) {
     const that = this;
 
@@ -50,6 +54,9 @@ module.exports = class BaseNLP {
     // Find the best matching Node
     matchedNode = that.findBestNode(triggeredIntentName, userData);
     logger.debug(`Matched Node: ${JSON.stringify(matchedNode)}`);
+
+    // Load parameters inside user.domainData
+    if (matchedNode.storeParameters) that.retrieveParameters(userData.domainData);
 
     // Invoke Actions
     try {

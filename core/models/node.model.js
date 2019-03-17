@@ -14,6 +14,7 @@ const nodeSchema = new Schema({
       type: Map,
       of: Number
     },
+    storeParameters: {type: Boolean, default: false},
     actions: [String],
     responses: [responseSchema]
   }
