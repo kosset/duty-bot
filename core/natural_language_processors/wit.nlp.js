@@ -18,7 +18,7 @@ module.exports = class WIT extends BaseNLP {
     const that = this;
     try {
       that.queryResult = await that.client.message(input, {});
-      return that.queryResult.entities.intent[0].value;
+      return ('intent' in that.queryResult.entities) ? that.queryResult.entities.intent[0].value : null;
     } catch (e) {
       //TODO: Check if length of text exceeds 256
       //TODO: Retry 3 times

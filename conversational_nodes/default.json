@@ -16,5 +16,23 @@
         ]
       }
     ]
+  },
+  "WELCOME": {
+    "intents": ["welcome"],
+    "responses": [
+      {
+        "type": "text",
+        "options": [
+          "Hi there!",
+          "Helloo"
+        ]
+      },
+      {
+        "type": "text",
+        "options": [
+          "How can I help you?"
+        ]
+      }
+    ]
   }
 }
