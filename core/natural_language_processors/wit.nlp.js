@@ -8,7 +8,7 @@ module.exports = class WIT extends BaseNLP {
     super(nodes, domain);
     this.client = new Wit({
       accessToken: auth.token,
-      // logger: logger // optional
+      logger: logger // optional
     });
     this.queryResult = {};
     logger.info(`New NLP for Wit.AI created`);

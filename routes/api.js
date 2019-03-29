@@ -15,15 +15,15 @@ const fbChannel = new channels.Facebook(
     config.get("facebook.page_access_token"),
     config.get("facebook.graph_version")
   ),
-  dialogflow = new nlp.Dialogflow({
-    projectId: config.get("dialogflow.project_id"),
-    language: config.get("dialogflow.lang"),
-    privateKey: config.get("dialogflow.private_key"),
-    clientEmail: config.get("dialogflow.client_email")
-    },
-    require('../conversational_nodes/default'),
-    domain
-  ),
+  // dialogflow = new nlp.Dialogflow({
+  //   projectId: config.get("dialogflow.project_id"),
+  //   language: config.get("dialogflow.lang"),
+  //   privateKey: config.get("dialogflow.private_key"),
+  //   clientEmail: config.get("dialogflow.client_email")
+  //   },
+  //   require('../conversational_nodes/default'),
+  //   domain
+  // ),
   wit = new nlp.Wit({
       token: config.get("wit.token")
     },

@@ -21,7 +21,7 @@ facebook:
 
 # MongoDB
 mongo:
-  url: mongodb://localhost:27017/hygieia
+  url: mongodb://localhost:27017/bot-core
 
 # Dialogflow
 dialogflow:

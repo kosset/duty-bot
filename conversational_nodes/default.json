@@ -5,14 +5,14 @@
       {
         "type": "text",
         "options": [
-          "I'm sorry, I couldn't get that.",
-          "I'm sorry, but I haven't been developed to answer that."
+          "Χμμ.. δε κατάλαβα τι μου είπες.",
+          "Δυστυχώς δεν έχω προγραμματιστεί να απαντάω σε αυτό."
         ]
       },
       {
         "type": "text",
         "options": [
-          "Why don't you try something else? :D"
+          "Γιατί δε δοκιμάζεις να με ρωτήσεις κάτι άλλο; :D"
         ]
       }
     ]
@@ -23,14 +23,55 @@
       {
         "type": "text",
         "options": [
-          "Hi there!",
-          "Helloo"
+          "Γειά σου!",
+          "Χαίρετε!",
+          "Βρε βρε βρε... :D"
         ]
       },
       {
         "type": "text",
         "options": [
-          "How can I help you?"
+          "Πως μπορώ να βοηθήσω;",
+          "Πως θα μπορούσα να φανώ χρήσιμος;",
+          "Τι θα μπορούσα να κάνω για σένα;"
+        ]
+      }
+    ]
+  },
+  "BYE": {
+    "intents": ["bye"],
+    "responses": [
+      {
+        "type": "text",
+        "options": [
+          "Αντίο!",
+          "Byee",
+          "Τα λέμεε..",
+          "Εις το επανιδείν!"
+        ]
+      }
+    ]
+  },
+  "THANKS": {
+    "intents": ["thanks"],
+    "responses": [
+      {
+        "type": "text",
+        "options": [
+          "Τίποτα :)",
+          "Γι' αυτό είμαι εδώ ;)",
+          "Τη δουλειά μου κάνω :)"
+        ]
+      }
+    ]
+  },
+  "PHARMACIES_NO_LOCATION": {
+    "intents": ["pharmacies_no_location"],
+    "responses": [
+      {
+        "type": "location",
+        "questions": [
+          "Σε ποια τοποθεσία ψάχνεις φαρμακείο; Πάτησε το κουμπί και τοποθέτησε την πινέζα στο σημείο που σε ενδιαφέρει"
         ]
       }
     ]
