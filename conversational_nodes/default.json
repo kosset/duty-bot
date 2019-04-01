@@ -75,5 +75,17 @@
         ]
       }
     ]
+  },
+  "LOCATION ATTACHMENT": {
+    "intents": ["LOCATION ATTACHMENT"],
+    "responses": [
+      {
+        "type": "text",
+        "options": [
+          "Έλαβα την τοποθεσία σου, μισό να υπολογίσω..."
+        ]
+      }
+    ],
+    "actions": ["storeLocation"]
   }
 }

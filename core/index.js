@@ -5,6 +5,7 @@ module.exports = {
   manageWebhookEvent: async function(
     rawEvent,
     channel,
+    localNaturalLanguageProcessor,
     naturalLanguageProcessor
   ) {
     let userData,
@@ -35,6 +36,10 @@ module.exports = {
         );
       } else {
         //TODO: Handle all other incoming events and send custom Responses
+        const nodeResponses = await localNaturalLanguageProcessor.process(channel.userLastMessage, userData);
+        parallelPromises.push(
+          channel.sendResponse(nodeResponses, userData)
+        );
       }
     } catch (e) {
       logger.error(e);

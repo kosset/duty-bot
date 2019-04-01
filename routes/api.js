@@ -14,8 +14,8 @@ const router = express.Router();
 const fbChannel = new channels.Facebook(
     config.get("facebook.page_access_token"),
     config.get("facebook.graph_version")
-  ),
-  // dialogflow = new nlp.Dialogflow({
+  );
+  // const dialogflow = new nlp.Dialogflow({
   //   projectId: config.get("dialogflow.project_id"),
   //   language: config.get("dialogflow.lang"),
   //   privateKey: config.get("dialogflow.private_key"),
@@ -23,13 +23,20 @@ const fbChannel = new channels.Facebook(
   //   },
   //   require('../conversational_nodes/default'),
   //   domain
-  // ),
-  wit = new nlp.Wit({
+  // );
+const obj = {
+  ...domain.actions,
+  ...fbChannel.actions
+}
+domain.actions = obj;
+const wit = new nlp.Wit({
       token: config.get("wit.token")
     },
     require('../conversational_nodes/default'),
     domain
   );
+const localNLP = new nlp.Local(require('../conversational_nodes/default'),
+  domain);
 
 router.get("/", function(req, res) {
   let api_resources = {
@@ -86,7 +93,7 @@ router.post(["/facebook", "/facebook/"], function(req, res) {
 
       // Async functionality
       //TODO: Handle the event
-      core.manageWebhookEvent(webhook_event, fbChannel, wit);
+      core.manageWebhookEvent(webhook_event, fbChannel, localNLP, wit);
     });
 
     // Returns a '200 OK' response to all requests

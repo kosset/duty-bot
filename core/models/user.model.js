@@ -12,7 +12,7 @@ const userSchema = new Schema(
     lastMessage: String,
     gender: { type: String, enum: ['male', 'female', 'unknown'], default: 'unknown' },
     channel: { type: String, enum: ['facebook'] },
-    domainData: {}, // Data stored from parameters
+    domainData: { type: Schema.Types.Mixed, default: {} }, // Data stored from parameters
     contexts: [{
       name: String,
       lifespan: Number,

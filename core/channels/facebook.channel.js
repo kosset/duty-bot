@@ -83,7 +83,7 @@ module.exports = class FacebookChannel {
     const that = this;
 
     try {
-      const responseData = that.toFacebookResponse(nodeResponses, userData); //TODO: Convert botResponses to responseData for facebook
+      const responseData = that.toFacebookResponse(nodeResponses, userData); //Convert botResponses to responseData for facebook
       await misc.asyncForEach(responseData, async (res) => {
         logger.debug(`Sending response back to fb: ${JSON.stringify(res)}`);
         await that.client.sendTypingIndicator(that.userPSID);
@@ -197,5 +197,22 @@ module.exports = class FacebookChannel {
           break;
       }
     });
+  }
+
+  get actions() {
+    let that = this;
+
+    return {
+      exampleAction: async function (userData) {
+        // Do something asynchronously (for consistency)
+      },
+      storeLocation: async function (userData) {
+        userData.domainData.locationInCoordinates = {
+          latitude: that.event.message.attachments[0].payload.coordinates.lat,
+          longitude: that.event.message.attachments[0].payload.coordinates.long
+        };
+        userData.markModified('domainData');
+      }
+    }
   }
 };
