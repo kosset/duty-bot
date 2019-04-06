@@ -203,10 +203,10 @@ module.exports = class FacebookChannel {
     let that = this;
 
     return {
-      exampleAction: async function (userData) {
+      exampleAction: async function (userData, responses) {
         // Do something asynchronously (for consistency)
       },
-      storeLocation: async function (userData) {
+      storeLocation: async function (userData, responses) {
         userData.domainData.locationInCoordinates = {
           latitude: that.event.message.attachments[0].payload.coordinates.lat,
           longitude: that.event.message.attachments[0].payload.coordinates.long

@@ -1,4 +1,4 @@
-import request from "request";
+const request = require("request");
 
 module.exports = class FavqsClient {
   constructor(token) {

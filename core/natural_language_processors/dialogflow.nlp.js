@@ -4,8 +4,8 @@ const BaseNLP = require("./base.nlp");
 
 module.exports = class Dialogflow extends BaseNLP{
 
-  constructor(auth, nodes, domain) {
-    super(nodes, domain);
+  constructor(auth, nodes, actions) {
+    super(nodes, actions);
     this.projectId = auth.projectId;
     this.languageCode = auth.language;
     this.sessionClient = new dialogflowNlp.SessionsClient({

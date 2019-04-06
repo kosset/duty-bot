@@ -3,8 +3,8 @@ const BaseNLP = require("./base.nlp");
 
 module.exports = class LocalNLP extends BaseNLP {
 
-  constructor(nodes, domain) {
-    super(nodes, domain);
+  constructor(nodes, actions) {
+    super(nodes, actions);
     this.queryResult = {};
     logger.info(`New Local NLP created`);
   }

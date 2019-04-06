@@ -4,8 +4,8 @@ const BaseNLP = require("./base.nlp");
 
 module.exports = class WIT extends BaseNLP {
 
-  constructor(auth, nodes, domain) {
-    super(nodes, domain);
+  constructor(auth, nodes, actions) {
+    super(nodes, actions);
     this.client = new Wit({
       accessToken: auth.token,
       // logger: logger // optional

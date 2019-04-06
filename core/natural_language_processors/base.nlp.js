@@ -3,12 +3,12 @@ const misc = require("../../utils/misc");
 
 module.exports = class BaseNLP {
 
-  constructor(nodes, domain) {
+  constructor(nodes, actions) {
     //Load Nodes
     this.nodes = nodes;
     this.nodesGroupedByIntentName = this.groupNodesByIntentName(); // Map
-    // logger.debug(JSON.stringify(this.nodesGroupedByIntentName));
-    this.domainModule = domain;
+    logger.debug(JSON.stringify(this.nodesGroupedByIntentName));
+    this.actions = actions;
   }
 
   groupNodesByIntentName() {
@@ -111,8 +111,8 @@ module.exports = class BaseNLP {
     if ("actions" in matchedNode) {
       try {
         await misc.asyncForEach(matchedNode.actions, async action => {
-          if (typeof that.domainModule.actions[action] === "function") {
-            await that.domainModule.actions[action](userData);
+          if (typeof that.actions[action] === "function") {
+            await that.actions[action](userData, matchedNode.responses);
           }
         }); //TODO: Let mongoose know that something updated
       } catch (e) {

@@ -4,39 +4,11 @@ const express = require("express"),
   core = require("../core"),
   channels = require("../core/channels"),
   nlp = require("../core/natural_language_processors"),
-  domain = require("../domain");
+  domain = require("../domain"),
+  fs = require("fs"),
+  path = require("path");
 
 const router = express.Router();
-
-/**
- * Build the core(s)
- */
-const fbChannel = new channels.Facebook(
-    config.get("facebook.page_access_token"),
-    config.get("facebook.graph_version")
-  );
-  // const dialogflow = new nlp.Dialogflow({
-  //   projectId: config.get("dialogflow.project_id"),
-  //   language: config.get("dialogflow.lang"),
-  //   privateKey: config.get("dialogflow.private_key"),
-  //   clientEmail: config.get("dialogflow.client_email")
-  //   },
-  //   require('../conversational_nodes/default'),
-  //   domain
-  // );
-const obj = {
-  ...domain.actions,
-  ...fbChannel.actions
-}
-domain.actions = obj;
-const wit = new nlp.Wit({
-      token: config.get("wit.token")
-    },
-    require('../conversational_nodes/default'),
-    domain
-  );
-const localNLP = new nlp.Local(require('../conversational_nodes/default'),
-  domain);
 
 router.get("/", function(req, res) {
   let api_resources = {
@@ -82,6 +54,16 @@ router.post(["/facebook", "/facebook/"], function(req, res) {
 
   // Checks this is an event from a page subscription
   if (body.object === "page") {
+
+    // Create Channels and NLPs for the specific incoming event
+    const nodes = loadConvNodes('conversational_nodes');
+    const fbChannel = new channels.Facebook( config.get("facebook.page_access_token"), config.get("facebook.graph_version"));
+    const actions = {  ...domain.actions,  ...fbChannel.actions };
+    console.log(JSON.stringify(nodes));
+    const localNLP = new nlp.Local(nodes, actions);
+    const wit = new nlp.Wit({ token: config.get("wit.token") }, nodes, actions);
+    // const dialogflow = new nlp.Dialogflow({ projectId: config.get("dialogflow.project_id"), language: config.get("dialogflow.lang"), privateKey: config.get("dialogflow.private_key"), clientEmail: config.get("dialogflow.client_email") }, nodes, actions);
+
     // Iterates over each entry - there may be multiple if batched
     body.entry.forEach(function(entry) {
       // Gets the message. entry.messaging is an array, but
@@ -91,8 +73,8 @@ router.post(["/facebook", "/facebook/"], function(req, res) {
 
       logger.debug(`Webhook got event: ${JSON.stringify(webhook_event)}`);
 
-      // Async functionality
-      //TODO: Handle the event
+      //NOTE: Async functionality
+      // Handle the event
       core.manageWebhookEvent(webhook_event, fbChannel, localNLP, wit);
     });
 
@@ -104,5 +86,28 @@ router.post(["/facebook", "/facebook/"], function(req, res) {
     res.sendStatus(404);
   }
 });
+
+function  loadConvNodes(nodesDirectory) {
+  logger.info(`Reading all nodes from ${nodesDirectory}`);
+  const convNodes = [];
+  nodesDirectory = path.resolve(process.cwd(), nodesDirectory);
+  fs.readdirSync(nodesDirectory).forEach((filename) => {
+    const ext = path.extname(filename);
+    if (ext === ".json") {
+      const content = fs.readFileSync(path.join(nodesDirectory, filename), "utf8");
+      try {
+        convNodes.push(JSON.parse(content));
+      } catch (e) {
+        logger.error("Invalid file in response folder.");
+      }
+    }
+  });
+  /// Merge all together.
+  const result = {};
+  convNodes.forEach((x) => {
+    Object.assign(result, x);
+  });
+  return result;
+}
 
 module.exports = router;

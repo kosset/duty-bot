@@ -86,6 +86,6 @@
         ]
       }
     ],
-    "actions": ["storeLocation"]
+    "actions": ["storeLocation", "showVerticalListOfNearestPharmacies"]
   }
 }
