@@ -59,7 +59,6 @@ router.post(["/facebook", "/facebook/"], function(req, res) {
     const nodes = loadConvNodes('conversational_nodes');
     const fbChannel = new channels.Facebook( config.get("facebook.page_access_token"), config.get("facebook.graph_version"));
     const actions = {  ...domain.actions,  ...fbChannel.actions };
-    console.log(JSON.stringify(nodes));
     const localNLP = new nlp.Local(nodes, actions);
     const wit = new nlp.Wit({ token: config.get("wit.token") }, nodes, actions);
     // const dialogflow = new nlp.Dialogflow({ projectId: config.get("dialogflow.project_id"), language: config.get("dialogflow.lang"), privateKey: config.get("dialogflow.private_key"), clientEmail: config.get("dialogflow.client_email") }, nodes, actions);
@@ -91,6 +90,7 @@ function  loadConvNodes(nodesDirectory) {
   logger.info(`Reading all nodes from ${nodesDirectory}`);
   const convNodes = [];
   nodesDirectory = path.resolve(process.cwd(), nodesDirectory);
+  //TODO: Make it async
   fs.readdirSync(nodesDirectory).forEach((filename) => {
     const ext = path.extname(filename);
     if (ext === ".json") {

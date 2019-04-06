@@ -3,22 +3,29 @@ const geolib = require("geolib");
 
 module.exports = class XOClient {
 
+  domainURL;
+  updatedAt;
+  allPharmacies;
+
   constructor() {
     this.domainURL = "https://www.xo.gr/maps/api/el/maps";
+    this.updatePharmacies();
   }
 
-  getNearestPharmacies(lat, long, numOfResults = 10) {
+  async getNearestPharmacies(lat, long, numOfResults = 10) {
     const that = this;
 
-    return that.getAllPharmacies().then(response => {
-      const pharmacies = response.Pharmacies;
+    try {
+      // Check when was last updated. If it's been more than one hour update them.
+      await that.updatePharmacies();
+
       let i, onlyCoords = [];
-      const iMax = pharmacies.length;
+      const iMax = that.allPharmacies.length;
       if (iMax > 0) {
         for(i=0; i < iMax; i++) {
           onlyCoords[i] = {
-            latitude: pharmacies[i].Geometry.WGS_F,
-            longitude: pharmacies[i].Geometry.WGS_L
+            latitude: that.allPharmacies[i].Geometry.WGS_F,
+            longitude: that.allPharmacies[i].Geometry.WGS_L
           }
         }
 
@@ -29,18 +36,40 @@ module.exports = class XOClient {
 
         let j, results = [];
         for (j = 0; j < numOfResults; j++) {
-          pharmacies[ordered[j].key].Distance = ordered[j].distance;
-          results[j] = pharmacies[ordered[j].key];
+          results[j] = that.allPharmacies[ordered[j].key];
+          results[j].Distance = ordered[j].distance;
         }
-
         return results;
+        
       } else {
-        return pharmacies;
+        return that.allPharmacies;
       }
-    }).catch(e => {
+    } catch(e) {
       throw e;
-    });
+    }
 
+  }
+
+  async updatePharmacies() {
+    const that = this;
+    const now = new Date(Date.now());
+    const shouldUpdate =
+      !that.updatedAt || // Has never been updated
+      (that.updatedAt.getHours() !== now.getHours()) || // Has not been updated more than a hour
+      (that.updatedAt.getDate() !== now.getDate()) || // Has not been updated more than a day
+      (that.updatedAt.getMonth() !== now.getMonth()); // Has not been updated more than a month
+
+    if (shouldUpdate) {
+      try {
+        logger.debug("Updating the list of pharmacies...")
+        const response = await that.getAllPharmacies();
+        that.allPharmacies = response.Pharmacies;
+        that.updatedAt = now;
+        logger.verbose("List of pharmacies has been updated.");
+      } catch (e) {
+        throw e;
+      }
+    }
   }
 
   getAllPharmacies() {
