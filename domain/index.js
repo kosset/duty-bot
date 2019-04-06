@@ -1,12 +1,13 @@
 const XOClient = require("./clients/xo.client");
 
+const xo = new XOClient();
+
 module.exports = {
   actions: {
     exampleAction: async function (userData, botResponses) {
       // Do something asynchronously (for consistency)
     },
     showVerticalListOfNearestPharmacies: async function(userData, botResponses) {
-      const xo = new XOClient();
 
       const pharmacies = await xo.getNearestPharmacies(userData.domainData.locationInCoordinates.latitude, userData.domainData.locationInCoordinates.longitude);
 

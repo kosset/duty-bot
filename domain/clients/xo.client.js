@@ -1,15 +1,14 @@
 const request = require("request");
 const geolib = require("geolib");
+const logger = require("../../loggers").appLogger;
 
 module.exports = class XOClient {
 
-  domainURL;
-  updatedAt;
-  allPharmacies;
-
   constructor() {
     this.domainURL = "https://www.xo.gr/maps/api/el/maps";
-    this.updatePharmacies();
+    this.updatePharmacies().catch(function(reason) {
+      throw reason;
+    });
   }
 
   async getNearestPharmacies(lat, long, numOfResults = 10) {
@@ -40,7 +39,7 @@ module.exports = class XOClient {
           results[j].Distance = ordered[j].distance;
         }
         return results;
-        
+
       } else {
         return that.allPharmacies;
       }
@@ -61,7 +60,7 @@ module.exports = class XOClient {
 
     if (shouldUpdate) {
       try {
-        logger.debug("Updating the list of pharmacies...")
+        logger.debug("Updating the list of pharmacies...");
         const response = await that.getAllPharmacies();
         that.allPharmacies = response.Pharmacies;
         that.updatedAt = now;
