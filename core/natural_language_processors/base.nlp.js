@@ -7,7 +7,7 @@ module.exports = class BaseNLP {
     //Load Nodes
     this.nodes = nodes;
     this.nodesGroupedByIntentName = this.groupNodesByIntentName(); // Map
-    logger.debug(JSON.stringify(this.nodesGroupedByIntentName));
+    // logger.debug(JSON.stringify(this.nodesGroupedByIntentName));
     this.actions = actions;
   }
 

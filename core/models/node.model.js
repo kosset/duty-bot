@@ -46,21 +46,26 @@ const cardResponseSchema = new Schema({
   imageUrl: String,
   subtitle: String,
   buttons: [{
-    type: String,
+    type: {
+      type: String,
+      enum: ['url', 'postback', 'phone'],
+      default: 'postback',
+      lowercase: true
+    },
     title: String,
     payload: String
   }]
 }, { _id: false });
 
 const cardsListResponseSchema = new Schema({
-  type: {
+  representation: {
     type: String,
     enum: ['horizontal', 'vertical'],
     required: true,
     lowercase: true
   },
   cards: [cardResponseSchema]
-});
+}, { _id: false });
 
 const locationResponseSchema = new Schema({
   options: {
@@ -68,6 +73,32 @@ const locationResponseSchema = new Schema({
     required: true
   }
 }, { _id: false });
+
+const shareCardResponseSchema = new Schema({
+  title: {
+    type: String,
+    required: true
+  },
+  imageUrl: String,
+  subtitle: String,
+  shared: {
+    type: {
+      title: {
+        type: String,
+        required: true
+      },
+      imageUrl: String,
+      subtitle: String,
+      button: {
+        title: String
+      }
+    },
+    required: true
+  },
+  botId: String,
+  invitedBy: String
+}, { _id: false });
+
 
 // `nodeSchema.path('responses')` gets the mongoose `DocumentArray`
 let responsesList = nodeSchema.path('responses');
@@ -81,6 +112,8 @@ responsesList.discriminator("cards", cardResponseSchema);
 responsesList.discriminator("cardslist", cardsListResponseSchema);
 
 responsesList.discriminator("location", locationResponseSchema);
+
+responsesList.discriminator("sharecard", shareCardResponseSchema);
 
 // Create the model
 const NodeModel = mongoose.model("Node", nodeSchema);

@@ -18,13 +18,22 @@ module.exports = class XOClient {
       // Check when was last updated. If it's been more than one hour update them.
       await that.updatePharmacies();
 
-      let i, onlyCoords = [];
-      const iMax = that.allPharmacies.length;
+      let i, onlyCoords = [], inWorkingHours, Start1, End1, Start2, End2;
+      const iMax = that.allPharmacies.length, now = new Date();
       if (iMax > 0) {
         for(i=0; i < iMax; i++) {
-          onlyCoords[i] = {
-            latitude: that.allPharmacies[i].Geometry.WGS_F,
-            longitude: that.allPharmacies[i].Geometry.WGS_L
+          Start1 = new Date(that.allPharmacies[i].Attributes.Start1);
+          End1 = new Date(that.allPharmacies[i].Attributes.End1);
+          Start2 = new Date(that.allPharmacies[i].Attributes.Start2);
+          End2 = new Date(that.allPharmacies[i].Attributes.End2);
+          inWorkingHours =
+            (Start1 <= now && now < End1) ||
+            (Start2 <= now && now < End2);
+          if (inWorkingHours) {
+            onlyCoords[i] = {
+              latitude: that.allPharmacies[i].Geometry.WGS_F,
+              longitude: that.allPharmacies[i].Geometry.WGS_L
+            }
           }
         }
 
@@ -34,6 +43,7 @@ module.exports = class XOClient {
         }, onlyCoords);
 
         let j, results = [];
+        if (ordered.length < numOfResults) numOfResults = ordered.length;
         for (j = 0; j < numOfResults; j++) {
           results[j] = that.allPharmacies[ordered[j].key];
           results[j].Distance = ordered[j].distance;

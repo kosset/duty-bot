@@ -142,7 +142,6 @@ module.exports = class FacebookChannel {
               })
             }
           };
-        case 'cardslist':
         case 'card':
           return {
             messaging_type: "RESPONSE",
@@ -160,22 +159,73 @@ module.exports = class FacebookChannel {
                       image_url: response.imageUrl,
                       subtitle: response.subtitle,
                       buttons: response.buttons.map(btn => {
-                        if (btn.payload.startsWith('http')) {
-                          return {
-                            type: "web_url",
-                            url: btn.postback,
-                            title: btn.text
-                          };
-                        } else {
-                          return {
-                            type: "postback",
-                            title: btn.postback,
-                            payload: btn.postback
-                          };
+                        switch (btn.type) {
+                          case "url":
+                            return {
+                              type: "web_url",
+                              title: btn.title,
+                              url: btn.payload
+                            };
+                          case "phone":
+                            return {
+                              type: "phone_number",
+                              title: btn.title,
+                              payload: btn.payload
+                            };
+                          default:
+                            return {
+                              type: "postback",
+                              title: btn.title,
+                              payload: btn.payload
+                            };
                         }
                       })
                     }
                   ]
+                }
+              }
+            }
+          };
+        case 'cardslist':
+          return {
+            messaging_type: "RESPONSE",
+            recipient:{
+              id: psid
+            },
+            message:{
+              attachment:{
+                type:"template",
+                payload:{
+                  template_type:"generic",
+                  elements: response.cards.map(card => {
+                    return {
+                      title: card.title || `Card's Title`,
+                      image_url: card.imageUrl,
+                      subtitle: card.subtitle,
+                      buttons: card.buttons.map(btn => {
+                        switch (btn.type) {
+                          case "url":
+                            return {
+                              type: "web_url",
+                              title: btn.title,
+                              url: btn.payload
+                            };
+                          case "phone":
+                            return {
+                              type: "phone_number",
+                              title: btn.title,
+                              payload: btn.payload
+                            };
+                          default:
+                            return {
+                              type: "postback",
+                              title: btn.title,
+                              payload: btn.payload
+                            };
+                        }
+                      })
+                    }
+                  })
                 }
               }
             }
@@ -191,6 +241,59 @@ module.exports = class FacebookChannel {
               quick_replies: [{
                 content_type:"location"
               }]
+            }
+          };
+        case 'sharecard':
+          return  {
+            messaging_type: "RESPONSE",
+            recipient:{
+              id: psid
+            },
+            message:{
+              attachment:{
+                type:"template",
+                payload:{
+                  template_type:"generic",
+                  elements:[
+                    {
+                      title: response.title || `Do you want to share me through messenger?`,
+                      image_url: response.imageUrl,
+                      subtitle: response.subtitle,
+                      buttons: [
+                        {
+                          type: "element_share",
+                          share_contents: {
+                            attachment: {
+                              type: "template",
+                              payload: {
+                                template_type: "generic",
+                                elements: [
+                                  {
+                                    title: response.shared.title || `You must try this bot!`,
+                                    subtitle: response.shared.subtitle,
+                                    image_url: response.shared.imageUrl,
+                                    default_action: {
+                                      type: "web_url",
+                                      url: `https://m.me/${response.botId}?ref=invited_by_${response.invitedBy}`
+                                    },
+                                    buttons: [
+                                      {
+                                        type: "web_url",
+                                        url: `https://m.me/${response.botId}?ref=invited_by_${response.invitedBy}`,
+                                        title: response.shared.button.title
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
             }
           };
         default:
