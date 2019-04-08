@@ -1,6 +1,7 @@
 const request = require("request");
 const geolib = require("geolib");
-const logger = require("../../loggers").appLogger;
+const logger = require("../../loggers").appLogger,
+  PharmacyModel = require("../models/pharmacy.model");
 
 module.exports = class XOClient {
 
@@ -16,25 +17,20 @@ module.exports = class XOClient {
 
     try {
       // Check when was last updated. If it's been more than one hour update them.
-      await that.updatePharmacies();
+      await that.updatePharmacies(); //TODO: Cron timer for updating
 
-      let i, onlyCoords = [], inWorkingHours, Start1, End1, Start2, End2;
-      const iMax = that.allPharmacies.length, now = new Date();
+      const now = new Date();
+      logger.debug(`Looking for pharmacies at ${now.toISOString()}`);
+      const pharmacies = await PharmacyModel.findOpenPharmacies(now);
+      const iMax = pharmacies.length;
+
+      let i, onlyCoords = [];
       if (iMax > 0) {
         for(i=0; i < iMax; i++) {
-          Start1 = new Date(that.allPharmacies[i].Attributes.Start1);
-          End1 = new Date(that.allPharmacies[i].Attributes.End1);
-          Start2 = new Date(that.allPharmacies[i].Attributes.Start2);
-          End2 = new Date(that.allPharmacies[i].Attributes.End2);
-          inWorkingHours =
-            (Start1 <= now && now < End1) ||
-            (Start2 <= now && now < End2);
-          if (inWorkingHours) {
             onlyCoords[i] = {
-              latitude: that.allPharmacies[i].Geometry.WGS_F,
-              longitude: that.allPharmacies[i].Geometry.WGS_L
+              latitude: pharmacies[i].location.coordinates[1],
+              longitude: pharmacies[i].location.coordinates[0]
             }
-          }
         }
 
         const ordered = geolib.orderByDistance({
@@ -45,13 +41,13 @@ module.exports = class XOClient {
         let j, results = [];
         if (ordered.length < numOfResults) numOfResults = ordered.length;
         for (j = 0; j < numOfResults; j++) {
-          results[j] = that.allPharmacies[ordered[j].key];
-          results[j].Distance = ordered[j].distance;
+          results[j] = pharmacies[ordered[j].key];
+          results[j].distance = ordered[j].distance;
         }
         return results;
 
       } else {
-        return that.allPharmacies;
+        return pharmacies;
       }
     } catch(e) {
       throw e;
@@ -61,19 +57,40 @@ module.exports = class XOClient {
 
   async updatePharmacies() {
     const that = this;
-    const now = new Date(Date.now());
-    const shouldUpdate =
-      !that.updatedAt || // Has never been updated
-      (that.updatedAt.getHours() !== now.getHours()) || // Has not been updated more than a hour
-      (that.updatedAt.getDate() !== now.getDate()) || // Has not been updated more than a day
-      (that.updatedAt.getMonth() !== now.getMonth()); // Has not been updated more than a month
 
+    let today = new Date();
+    today = new Date(today.getFullYear(), today.getMonth(), today.getUTCDate() );
+
+    const pharmaciesHaveBeenUpdated = await PharmacyModel.pharmaciesForDateExist(today);
+    const shouldUpdate = !pharmaciesHaveBeenUpdated;
     if (shouldUpdate) {
       try {
         logger.debug("Updating the list of pharmacies...");
         const response = await that.getAllPharmacies();
-        that.allPharmacies = response.Pharmacies;
-        that.updatedAt = now;
+        const numOfPharmacies = 'Pharmacies' in response ? response.Pharmacies.length : 0;
+        let i, pharmacy;
+        for (i = 0; i < numOfPharmacies; i++) {
+          pharmacy = new PharmacyModel({
+            name: response.Pharmacies[i].Attributes.Name,
+            nameLatin: response.Pharmacies[i].Attributes.NameUrl,
+            address: response.Pharmacies[i].Attributes.Address,
+            phone: response.Pharmacies[i].Attributes.Tel,
+            createdAt: new Date(response.Pharmacies[i].Attributes.Date),
+            workingHours: response.Pharmacies[i].Attributes.Cure,
+            startAt1: new Date(response.Pharmacies[i].Attributes.Start1),
+            endAt1: new Date(response.Pharmacies[i].Attributes.End1),
+            startAt2: new Date(response.Pharmacies[i].Attributes.Start2),
+            endAt2: new Date(response.Pharmacies[i].Attributes.End2),
+            location: {
+              type: 'Point',
+              coordinates: [
+                response.Pharmacies[i].Geometry.WGS_L, // Longitude
+                response.Pharmacies[i].Geometry.WGS_F // Latitude
+              ]
+            }
+          });
+          await pharmacy.save();
+        }
         logger.verbose("List of pharmacies has been updated.");
       } catch (e) {
         throw e;

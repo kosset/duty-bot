@@ -1,3 +1,4 @@
+const logger = require("../loggers").appLogger;
 const XOClient = require("./clients/xo.client");
 
 const xo = new XOClient();
@@ -16,6 +17,8 @@ module.exports = {
       );
 
       if (pharmacies && pharmacies.length) {
+        logger.debug(`Found ${pharmacies.length} open pharmacies.`);
+
         botResponses.push({
           type: 'text',
           options: [
@@ -23,22 +26,26 @@ module.exports = {
           ]
         });
 
+        let warning = ``;
+
         botResponses.push({
           type: "cardslist",
           representation: "horizontal",
           cards: pharmacies.map((pharmacy) => {
+            if (pharmacy.distance > 10000) warning = `⚠`;
+            else warning = ``;
             return {
               type: "card",
-              title: pharmacy.Attributes.Name,
-              subtitle: `${pharmacy.Attributes.Address}\nΑπόσταση: ${pharmacy.Distance}μ.\n${pharmacy.Attributes.Cure}`,
+              title: pharmacy.name,
+              subtitle: `${pharmacy.address}\nΑπόσταση: ${pharmacy.distance}μ. ${warning}\n${pharmacy.workingHours}`,
               buttons: [{
                 type: 'url',
                 title: "📍 Google Maps",
-                payload: `https://maps.google.com/?ll=${pharmacy.Geometry.WGS_F},${pharmacy.Geometry.WGS_L}`
+                payload: `https://maps.google.com/?ll=${pharmacy.location.coordinates[1]},${pharmacy.location.coordinates[0]}`
               },{
                 type: 'phone',
-                title: `☎ ${pharmacy.Attributes.Tel}`,
-                payload: `+30${pharmacy.Attributes.Tel}`
+                title: `☎ ${pharmacy.phone}`,
+                payload: `+30${pharmacy.phone}`
               }]
             }
           })
