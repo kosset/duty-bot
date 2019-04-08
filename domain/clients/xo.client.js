@@ -21,34 +21,7 @@ module.exports = class XOClient {
 
       const now = new Date();
       logger.debug(`Looking for pharmacies at ${now.toISOString()}`);
-      const pharmacies = await PharmacyModel.findOpenPharmacies(now);
-      const iMax = pharmacies.length;
-
-      let i, onlyCoords = [];
-      if (iMax > 0) {
-        for(i=0; i < iMax; i++) {
-            onlyCoords[i] = {
-              latitude: pharmacies[i].location.coordinates[1],
-              longitude: pharmacies[i].location.coordinates[0]
-            }
-        }
-
-        const ordered = geolib.orderByDistance({
-          latitude: lat,
-          longitude: long
-        }, onlyCoords);
-
-        let j, results = [];
-        if (ordered.length < numOfResults) numOfResults = ordered.length;
-        for (j = 0; j < numOfResults; j++) {
-          results[j] = pharmacies[ordered[j].key];
-          results[j].distance = ordered[j].distance;
-        }
-        return results;
-
-      } else {
-        return pharmacies;
-      }
+      return await PharmacyModel.findNearestOpenPharmacies(lat, long, now, numOfResults);
     } catch(e) {
       throw e;
     }

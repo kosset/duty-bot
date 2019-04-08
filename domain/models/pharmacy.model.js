@@ -32,6 +32,7 @@ const pharmacySchema = new Schema(
 );
 
 pharmacySchema.index({createdAt: 1},{expireAfterSeconds: 259200}); // Expires after 3 days
+pharmacySchema.index({ location: "2dsphere" });
 
 pharmacySchema.statics.findOpenPharmacies = function(date) {
   return this.find({
@@ -40,6 +41,30 @@ pharmacySchema.statics.findOpenPharmacies = function(date) {
       { $and: [{startAt2: {$lte: date}}, {endAt2: {$gt: date}}] }
     ]
   }).exec();
+};
+
+pharmacySchema.statics.findNearestOpenPharmacies = function(lat, long, date, limit) {
+  return this.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: "Point",
+          coordinates: [long, lat]
+        },
+        distanceField: "distance",
+        spherical: true
+      }
+    },
+    {
+      $match: {
+        $or: [
+          { $and: [{startAt1: {$lte: date}}, {endAt1: {$gt: date}}] },
+          { $and: [{startAt2: {$lte: date}}, {endAt2: {$gt: date}}] }
+        ]
+      }
+    },
+    { $limit : limit }
+  ]).exec();
 };
 
 pharmacySchema.statics.pharmaciesForDateExist = function(date) {

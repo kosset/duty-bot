@@ -37,7 +37,7 @@ module.exports = {
             return {
               type: "card",
               title: pharmacy.name,
-              subtitle: `${pharmacy.address}\nΑπόσταση: ${pharmacy.distance}μ. ${warning}\n${pharmacy.workingHours}`,
+              subtitle: `${pharmacy.address}\nΑπόσταση: ${Math.round(pharmacy.distance)}μ. ${warning}\n${pharmacy.workingHours}`,
               buttons: [{
                 type: 'url',
                 title: "📍 Google Maps",
