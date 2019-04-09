@@ -1,10 +1,5 @@
 port: PORT
 
-# Quotes APIs
-quotes:
-  favqs:
-    token:
-
 # Platforms
 facebook:
   verify_token: FB_VERIFY_TOKEN
