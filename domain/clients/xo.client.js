@@ -1,5 +1,5 @@
 const request = require("request");
-const geolib = require("geolib");
+const CronJob = require('cron').CronJob;
 const logger = require("../../loggers").appLogger,
   PharmacyModel = require("../models/pharmacy.model");
 
@@ -7,9 +7,10 @@ module.exports = class XOClient {
 
   constructor() {
     this.domainURL = "https://www.xo.gr/maps/api/el/maps";
-    this.updatePharmacies().catch(function(reason) {
-      throw reason;
-    });
+    const that = this;
+    new CronJob('0 0 3 * * *', function() {
+      return that.updatePharmacies().catch(e => throw e);
+    }, null, true, 'Europe/Athens', null, true);
   }
 
   async getNearestPharmacies(lat, long, numOfResults = 10) {

@@ -33,3 +33,7 @@ dialogflow:
 # Wit.AI
 wit:
   token:
+
+# ScraperAPI
+scraper:
+  api_key:

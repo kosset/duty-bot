@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/server.js",
-    "dev": "nodemon ./bin/server.js"
+    "start": "node ./bin/server.js"
   },
   "eslintConfig": {
     "parserOptions": {
@@ -22,9 +21,13 @@
       "node": true
     }
   },
+  "engines": {
+    "node": "10.15.0"
+  },
   "dependencies": {
     "config": "^2.0.1",
     "cookie-parser": "~1.4.3",
+    "cron": "^1.7.0",
     "dialogflow": "^0.7.0",
     "express": "~4.16.0",
     "mongoose": "^5.4.19",
