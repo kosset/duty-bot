@@ -9,7 +9,9 @@ module.exports = class XOClient {
     this.domainURL = "https://www.xo.gr/maps/api/el/maps";
     const that = this;
     new CronJob('0 0 3 * * *', function() {
-      return that.updatePharmacies().catch(e => throw e);
+      return that.updatePharmacies().catch(e => {
+        throw e;
+      });
     }, null, true, 'Europe/Athens', null, true);
   }
 
