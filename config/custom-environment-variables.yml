@@ -1,0 +1,30 @@
+port: PORT
+
+# Quotes APIs
+quotes:
+  favqs:
+    token:
+
+# Platforms
+facebook:
+  verify_token: FB_VERIFY_TOKEN
+  page_access_token: FB_PA_TOKEN
+  graph_version: FB_GRAPH_VERSION
+
+# MongoDB
+mongo:
+  url: MONGO_URL
+
+# Dialogflow
+dialogflow:
+  project_id: DF_PROJECT_ID
+  private_key: DF_PRIVATE_KEY
+  client_email: DF_CLIENT_EMAIL
+
+# Wit.AI
+wit:
+  token: WIT_TOKEN
+
+# ScraperAPI
+scraper:
+  api_key: SCRAPER_KEY
