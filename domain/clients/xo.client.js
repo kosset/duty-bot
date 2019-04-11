@@ -95,12 +95,12 @@ module.exports = class XOClient {
   makeAPIRequest(options) {
     return new Promise((resolve, reject) => {
       request(options, function(error, response, body) {
-        if (typeof body === "string") body = JSON.parse(body.trim());
 
         if (error) return reject(error); // This might be an exception
 
         if (response.statusCode > 399) return reject(body);
 
+        if (typeof body === "string") body = JSON.parse(body.trim());
         return resolve(body);
       });
     });
