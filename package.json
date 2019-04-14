@@ -25,6 +25,7 @@
     "node": "10.15.0"
   },
   "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
     "config": "^2.0.1",
     "cookie-parser": "~1.4.3",
     "cron": "^1.7.0",

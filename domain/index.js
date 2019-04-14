@@ -1,7 +1,7 @@
 const logger = require("../loggers").appLogger;
-const XOClient = require("./clients/xo.client");
+const VriskoScraperService = require("./services/scrape_vrisko.service");
 
-const xo = new XOClient();
+const xo = new VriskoScraperService();
 
 module.exports = {
   actions: {
