@@ -1,8 +1,6 @@
 const logger = require("../loggers").appLogger;
 const PharmacyModel = require("./models/pharmacy.model");
 
-const xo = new VriskoScraperService();
-
 module.exports = {
   actions: {
     exampleAction: async function (userData, botResponses) {
