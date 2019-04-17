@@ -1,5 +1,5 @@
 const logger = require("../loggers").appLogger;
-const VriskoScraperService = require("./services/scrape_vrisko.service");
+const PharmacyModel = require("./models/pharmacy.model");
 
 const xo = new VriskoScraperService();
 
@@ -10,11 +10,18 @@ module.exports = {
     },
     showVerticalListOfNearestPharmacies: async function(userData, botResponses) {
 
-      const pharmacies = await xo.getNearestPharmacies(
-        userData.domainData.locationInCoordinates.latitude,
-        userData.domainData.locationInCoordinates.longitude,
-        10
-      );
+      let pharmacies = [];
+      try {
+        const now = new Date();
+        logger.debug(`Looking for pharmacies at ${now.toISOString()}`);
+        pharmacies = await PharmacyModel.findNearestOpenPharmacies(
+          userData.domainData.locationInCoordinates.latitude,
+          userData.domainData.locationInCoordinates.longitude,
+          now,
+          10);
+      } catch(e) {
+        throw e;
+      }
 
       if (pharmacies && pharmacies.length) {
         logger.debug(`Found ${pharmacies.length} open pharmacies.`);
