@@ -87,5 +87,22 @@
       }
     ],
     "actions": ["storeLocation", "showVerticalListOfNearestPharmacies"]
+  },
+  "NEW_USER_CLICKED": {
+    "intents": ["NEW_USER_CLICKED"],
+    "responses": [
+      {
+        "type": "text",
+        "options": [
+          "Καλώς όρισες!"
+        ]
+      },
+      {
+        "type": "text",
+        "options": [
+          "Για να ξεκινήσεις μπορείς να γράψεις 'Φαρμακεία' και θα σε βοηθήσω να βρεις το κοντινότερο ανοιχτό φαρμακείο τώρα."
+        ]
+      }
+    ]
   }
 }
