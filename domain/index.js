@@ -45,8 +45,8 @@ module.exports = {
               subtitle: `${pharmacy.address}\nΑπόσταση: ${Math.round(pharmacy.distance)}μ. ${warning}\n${pharmacy.workingHours}`,
               buttons: [{
                 type: 'url',
-                title: "📍 Google Maps",
-                payload: `https://maps.google.com/?ll=${pharmacy.location.coordinates[1]},${pharmacy.location.coordinates[0]}`
+                title: "📍 Οδηγίες Χάρτη",
+                payload: `https://www.google.com/maps/dir/${userData.domainData.locationInCoordinates.longitude},${userData.domainData.locationInCoordinates.latitude}/${pharmacy.location.coordinates[1]},${pharmacy.location.coordinates[0]}`
               },{
                 type: 'phone',
                 title: `☎ ${pharmacy.phone}`,
