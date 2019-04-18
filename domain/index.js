@@ -46,7 +46,7 @@ module.exports = {
               buttons: [{
                 type: 'url',
                 title: "📍 Οδηγίες Χάρτη",
-                payload: `https://www.google.com/maps/dir/${userData.domainData.locationInCoordinates.longitude},${userData.domainData.locationInCoordinates.latitude}/${pharmacy.location.coordinates[1]},${pharmacy.location.coordinates[0]}`
+                payload: `https://www.google.com/maps/dir/${userData.domainData.locationInCoordinates.latitude},${userData.domainData.locationInCoordinates.longitude}/${pharmacy.location.coordinates[1]},${pharmacy.location.coordinates[0]}`
               },{
                 type: 'phone',
                 title: `☎ ${pharmacy.phone}`,
