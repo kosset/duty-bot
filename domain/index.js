@@ -10,8 +10,8 @@ module.exports = {
 
       let pharmacies = [];
       try {
-        const now = new Date();
-        logger.debug(`Looking for pharmacies at ${now.toISOString()}`);
+        const now = Date.now();
+        // logger.debug(`Looking for pharmacies at ${now.toISOString()}`);
         pharmacies = await PharmacyModel.findNearestOpenPharmacies(
           userData.domainData.locationInCoordinates.latitude,
           userData.domainData.locationInCoordinates.longitude,
