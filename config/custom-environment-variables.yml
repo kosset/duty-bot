@@ -1,5 +1,12 @@
 port: PORT
 
+# Logging configuration
+logging:
+  console:
+    level: LOG_LEVEL_CONSOLE
+  file:
+    level: LOG_LEVEL_FILE
+
 # Platforms
 facebook:
   verify_token: FB_VERIFY_TOKEN
