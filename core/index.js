@@ -68,19 +68,20 @@ module.exports = {
     }
 
     // Every day fetch the user data
-    const shouldFetchData =
-      !userData ||
-      (userData &&
-        userData.fetchedAt &&
-        Date.now() - userData.fetchedAt.getTime() > 24 * 60 * 60 * 1000);
-    if (shouldFetchData) {
-      // Build new/updated User Data
-      try {
-        retrievedData = await channel.retrieveNewUserData();
-        userData = new UserModel(retrievedData);
-      } catch (e) {
-        logger.error(`Error retrieving new user data from channel: ${e}`);
+    try {
+      const noUserData = !userData,
+        outofdateUserData = userData &&
+          userData.fetchedAt &&
+          ((Date.now() - userData.fetchedAt.getTime()) > 5 * 1000);
+      if (noUserData) {
+          retrievedData = await channel.retrieveNewUserData();
+          userData = new UserModel(retrievedData);
+      } else if (outofdateUserData) {
+          retrievedData = await channel.retrieveNewUserData();
+          userData.set(retrievedData);
       }
+    } catch (e) {
+      logger.error(`Error retrieving new user data from channel: ${e}`);
     }
 
     // Store Last Message

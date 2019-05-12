@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
   {
-    psid: { type: String, required: true }, // Platform Scoped ID
+    psid: { type: String, required: true, index: true }, // Platform Scoped ID
     name: {
       first: String,
       last: String
