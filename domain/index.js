@@ -42,14 +42,14 @@ module.exports = {
             return {
               type: "card",
               title: pharmacy.name,
-              subtitle: `${pharmacy.address}\nΑπόσταση: ${Math.round(pharmacy.distance)}μ. ${warning}\n${pharmacy.workingHours}`,
+              subtitle: `${pharmacy.address}\nΑπόσταση: ${Math.round(pharmacy.distance)}μ. ${warning}\n${pharmacy.createdAt.to} ${pharmacy.workingHours}`,
               buttons: [{
                 type: 'url',
                 title: "📍 Οδηγίες Χάρτη",
                 payload: `https://www.google.com/maps/dir/${userData.domainData.locationInCoordinates.latitude},${userData.domainData.locationInCoordinates.longitude}/${pharmacy.location.coordinates[1]},${pharmacy.location.coordinates[0]}`
               },{
                 type: 'phone',
-                title: `☎ ${pharmacy.phone}`,
+                title: `📞 ${pharmacy.phone}`,
                 payload: `+30${pharmacy.phone}`
               }]
             }
