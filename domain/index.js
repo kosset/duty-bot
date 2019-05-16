@@ -42,7 +42,7 @@ module.exports = {
             return {
               type: "card",
               title: pharmacy.name,
-              subtitle: `${pharmacy.address}\nΑπόσταση: ${Math.round(pharmacy.distance)}μ. ${warning}\n${pharmacy.createdAt.to} ${pharmacy.workingHours}`,
+              subtitle: `${pharmacy.address}\nΑπόσταση: ${Math.round(pharmacy.distance)}μ. ${warning}\n${pharmacy.createdAt} ${pharmacy.workingHours}`,
               buttons: [{
                 type: 'url',
                 title: "📍 Οδηγίες Χάρτη",
