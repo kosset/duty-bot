@@ -52,7 +52,7 @@ userSchema.methods.getActiveContexts = function() {
 };
 
 userSchema.methods.setActiveContexts = function(newContexts) {
-  let contextsReadyToBeStored = [];
+  let contextsReadyToBeStored = [], contextsToBeRemoved = [];
 
   // Decrease the lifespan of the old Contexts
   for (let context of this.contexts) {
@@ -68,8 +68,13 @@ userSchema.methods.setActiveContexts = function(newContexts) {
         name: newContextName,
         lifespan: newContexts[newContextName]
       });
+    } else if (newContexts[newContextName] === 0) {
+      contextsToBeRemoved.push(newContextName);
     }
   }
+
+  // Remove new Contexts with LifeSpan 0
+  contextsReadyToBeStored = contextsReadyToBeStored.filter(c => contextsToBeRemoved.includes(c.name));
 
   this.contexts = contextsReadyToBeStored;
 };
