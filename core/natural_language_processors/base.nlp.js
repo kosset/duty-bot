@@ -55,6 +55,9 @@ module.exports = class BaseNLP {
     matchedNode = that.findBestNode(triggeredIntentName, userData);
     logger.debug(`Matched Node: ${JSON.stringify(matchedNode)}`);
 
+    // Set the active contexts
+    if (matchedNode.postConditions) userData.setActiveContexts(matchedNode.postConditions);
+
     // Load parameters inside user.domainData
     if (matchedNode.storeParameters) that.retrieveParameters(userData.domainData);
 
@@ -91,7 +94,7 @@ module.exports = class BaseNLP {
         if (!preCondIsSubset) continue;
 
         inter = possibleNode.preConditions.filter((n) => {
-          return userActiveContexts.contains(n);
+          return userActiveContexts.includes(n);
         });
 
       }

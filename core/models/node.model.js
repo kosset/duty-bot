@@ -68,7 +68,7 @@ const cardsListResponseSchema = new Schema({
 }, { _id: false });
 
 const locationResponseSchema = new Schema({
-  options: {
+  questions: {
     type: [String],
     required: true
   }
