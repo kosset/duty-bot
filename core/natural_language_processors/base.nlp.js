@@ -22,7 +22,7 @@ module.exports = class BaseNLP {
       intents = that.nodes[nodeID]['intents'];
       for (let intentName of intents) {
         if (!(intentName in obj)) obj[intentName] = [];
-        obj[intentName].push(that.nodes[nodeID]);
+        obj[intentName].push({...that.nodes[nodeID], key: nodeID});
       }
     }
 
@@ -53,7 +53,7 @@ module.exports = class BaseNLP {
 
     // Find the best matching Node
     matchedNode = that.findBestNode(triggeredIntentName, userData);
-    logger.debug(`Matched Node: ${JSON.stringify(matchedNode)}`);
+    logger.debug(`Matched Node (score: ${matchedNode.score}): '${matchedNode.key}'`);
 
     // Set the active contexts
     if (matchedNode.postConditions) userData.setActiveContexts(matchedNode.postConditions);
@@ -80,28 +80,31 @@ module.exports = class BaseNLP {
     // Check Preconditions of Nodes
     let groupedNodes = this.nodesGroupedByIntentName[triggeredIntentName];
     if (!groupedNodes) groupedNodes = this.nodesGroupedByIntentName['Default Fallback'];
-    for (let possibleNode of groupedNodes) {
+    for (let [possibleNodeKey, possibleNodeData] of groupedNodes.entries()) {
 
       // inter will store the intersection of the input contexts array and the currently active contexts.
       // This is used as a score to determine which node is more relevant. Other implementations may choose
       // a different method for scoring.
       let inter = [];
 
-      if (possibleNode.preConditions && possibleNode.preConditions.length > 0) {
+      if (possibleNodeData.preConditions && possibleNodeData.preConditions.length > 0) {
 
         // Pre-Conditions must be a subset of User's Active Contexts
-        const preCondIsSubset = possibleNode.preConditions.every(val => userActiveContexts.includes(val));
+        const preCondIsSubset = possibleNodeData.preConditions.every(val => userActiveContexts.includes(val));
         if (!preCondIsSubset) continue;
 
-        inter = possibleNode.preConditions.filter((n) => {
+        inter = possibleNodeData.preConditions.filter((n) => {
           return userActiveContexts.includes(n);
         });
 
       }
 
       if (!bestNode || inter.length > bestScore) {
-        bestNode = possibleNode;
         bestScore = inter.length;
+        bestNode = {
+          ...possibleNodeData,
+          score: bestScore
+        };
       }
 
     }
