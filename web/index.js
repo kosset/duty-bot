@@ -3,12 +3,12 @@ const router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  res.sendFile(__dirname + "/public/index.html");
 });
 
 /* GET home page. */
 router.get('/privacy-policy', function(req, res, next) {
-  res.render('privacy-policy.html',  { title: 'Privacy Policy' });
+  res.sendFile(__dirname + "/public/privacy-policy.html");
 });
 
 module.exports = router;

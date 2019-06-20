@@ -1,10 +1,10 @@
 const express = require("express"),
   config = require("config"),
-  logger = require("../loggers").appLogger,
-  core = require("../core"),
-  channels = require("../core/channels"),
-  nlp = require("../core/natural_language_processors"),
-  domain = require("../domain"),
+  logger = require("../../loggers").appLogger,
+  core = require("../../core"),
+  channels = require("../../core/channels"),
+  nlp = require("../../core/natural_language_processors"),
+  domain = require("../../domain"),
   fs = require("fs"),
   path = require("path");
 

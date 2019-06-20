@@ -28,7 +28,6 @@
     "config": "^2.0.1",
     "cookie-parser": "~1.4.3",
     "dialogflow": "^0.7.0",
-    "ejs": "^2.6.1",
     "express": "~4.16.0",
     "js-yaml": "^3.13.1",
     "mongoose": "^5.4.19",

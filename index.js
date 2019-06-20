@@ -13,16 +13,15 @@ const
  * LOCAL Module Dependencies
  */
 const
-  indexRouter = require('./routes/index'),
-  apiRouter = require('./routes/api');
+  indexRouter = require('./web'),
+  apiRouter = require('./web/rest/api');
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname + '/public')));
-app.engine('html', require('ejs').renderFile);
+app.use(express.static(path.join(__dirname + '/web/public')));
 
 /**
  * Endpoints
