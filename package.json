@@ -5,6 +5,10 @@
   "scripts": {
     "start": "node ./bin/server.js"
   },
+  "repository": {
+    "type" : "git",
+    "url" : "github:kosset/duty-bot"
+  },
   "eslintConfig": {
     "parserOptions": {
       "ecmaVersion": 6,
