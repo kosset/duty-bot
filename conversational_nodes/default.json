@@ -165,10 +165,12 @@
     "responses": [
       {
         "type": "sharecard",
-        "title": "Σύστησέ με σε ένα φίλο σου",
+        "title": "Σύστησέ με σε ένα φίλο σου! #sharingIsCaring",
+        "imageUrl": "https://www.dropbox.com/s/delzk3nfiqhj36o/black-and-white-black-and-white-connection-615479.jpg?raw=1",
+        "subtitle": "Κάνε κλικ στο κουμπί και επέλεξε τον ή τους φίλους σου που επιθυμείς ",
         "shared": {
             "title": "Εφημερεύοντα Φαρμακεία Κοντά",
-            "imageUrl": "https://scontent.fskg1-1.fna.fbcdn.net/v/t1.0-9/64868652_1270620909764017_6870277369408520192_n.jpg?_nc_cat=109&_nc_oc=AQknQgGT9SGLlOdWmdpHFc1R06UyYCXMRGQMM-KqCbdfOpOmZoN6gxMDrF9D0SdMnak&_nc_ht=scontent.fskg1-1.fna&oh=31875b0215d6bbb9daa828e3ccdd2bdb&oe=5D86F2BF",
+            "imageUrl": "https://www.dropbox.com/s/mq0a0a03epfuklc/dutybot.jpg?raw=1",
             "subtitle": "Με λίγα κλικ, τα κοντινότερα Εφημερεύοντα Φαρμακεία βρίσκονται στην οθόνη σου",
             "button": {
               "title": "Ψάξε τώρα"
