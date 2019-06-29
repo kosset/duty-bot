@@ -70,7 +70,7 @@
     ]
   },
   "PHARMACIES_NO_LOCATION": {
-    "intents": ["pharmacies_no_location"],
+    "intents": ["pharmacies_no_location", "FIND_PHARMACY"],
     "postConditions": {"WAITING_FOR_LOCATION": 2},
     "responses": [
       {
@@ -157,6 +157,23 @@
           "Απλώς γράψε 'Ψάχνω φαρμακείο' ή κάνε κλικ στο παρακάτω κουμπί"
         ],
         "replies": ["Ψάχνω Φαρμακείο"]
+      }
+    ]
+  },
+  "SHARE": {
+    "intents": ["SHARE"],
+    "responses": [
+      {
+        "type": "sharecard",
+        "title": "Σύστησέ με σε ένα φίλο σου",
+        "shared": {
+            "title": "Εφημερεύοντα Φαρμακεία Κοντά",
+            "imageUrl": "https://scontent.fskg1-1.fna.fbcdn.net/v/t1.0-9/64868652_1270620909764017_6870277369408520192_n.jpg?_nc_cat=109&_nc_oc=AQknQgGT9SGLlOdWmdpHFc1R06UyYCXMRGQMM-KqCbdfOpOmZoN6gxMDrF9D0SdMnak&_nc_ht=scontent.fskg1-1.fna&oh=31875b0215d6bbb9daa828e3ccdd2bdb&oe=5D86F2BF",
+            "subtitle": "Με λίγα κλικ, τα κοντινότερα Εφημερεύοντα Φαρμακεία βρίσκονται στην οθόνη σου",
+            "button": {
+              "title": "Ψάξε τώρα"
+            }
+        }
       }
     ]
   }

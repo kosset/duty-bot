@@ -94,9 +94,7 @@ const shareCardResponseSchema = new Schema({
       }
     },
     required: true
-  },
-  botId: String,
-  invitedBy: String
+  }
 }, { _id: false });
 
 

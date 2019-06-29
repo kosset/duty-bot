@@ -111,6 +111,7 @@ module.exports = class FacebookChannel {
 
   toFacebookResponse(nodeResponses, userData) {
     const psid = userData.psid;
+    const botId = this.event.recipient.id;
 
     // Iterating in nodeResponses create the list of FacebookResponses
     return nodeResponses.map(function (response) {
@@ -274,12 +275,12 @@ module.exports = class FacebookChannel {
                                     image_url: response.shared.imageUrl,
                                     default_action: {
                                       type: "web_url",
-                                      url: `https://m.me/${response.botId}?ref=invited_by_${response.invitedBy}`
+                                      url: `https://m.me/${botId}?ref=invited_by_${psid}`
                                     },
                                     buttons: [
                                       {
                                         type: "web_url",
-                                        url: `https://m.me/${response.botId}?ref=invited_by_${response.invitedBy}`,
+                                        url: `https://m.me/${botId}?ref=invited_by_${psid}`,
                                         title: response.shared.button.title
                                       }
                                     ]
