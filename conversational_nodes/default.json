@@ -152,7 +152,7 @@
         ]
       },
       {
-        "type": "quickreplies",
+        "type": "quickReplies",
         "questions": [
           "Απλώς γράψε 'Ψάχνω φαρμακείο' ή κάνε κλικ στο παρακάτω κουμπί"
         ],

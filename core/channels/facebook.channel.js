@@ -28,16 +28,16 @@ module.exports = class FacebookChannel {
   }
 
   get userTextInput() {
-    return this.event.postback
-      ? this.event.postback.title
-      : this.event.message.text
-        ? this.event.message.text
-        : null;
+    return this.event.message
+      ? this.event.message.text
+       ? this.event.message.text
+        : null
+      : null;
   }
 
   get userLastMessage() {
     return this.event.postback
-      ? JSON.stringify(this.event.postback)
+      ? this.event.postback.payload
       : this.event.message.text
       ? this.event.message.text
       : `${this.event.message.attachments[0].type.toUpperCase()} ATTACHMENT`;
