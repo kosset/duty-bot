@@ -10,4 +10,7 @@ module.exports = {
 
   chooseRandom: myArray => myArray[Math.floor(Math.random() * myArray.length)],
 
+  formatDate: d => ("0" + d.getDate()).slice(-2) + "/" + ("0"+(d.getMonth()+1)).slice(-2) + "/" +
+    d.getFullYear(),
+
 };

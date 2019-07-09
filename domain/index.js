@@ -1,5 +1,6 @@
 const logger = require("../loggers").appLogger;
 const PharmacyModel = require("./models/pharmacy.model");
+const { formatDate } = require("../utils/misc");
 
 module.exports = {
   actions: {
@@ -42,7 +43,7 @@ module.exports = {
             return {
               type: "card",
               title: pharmacy.name,
-              subtitle: `${pharmacy.address}\nΑπόσταση: ${Math.round(pharmacy.distance)}μ. ${warning}\n${pharmacy.createdAt.toLocaleDateString()} ${pharmacy.workingHours}`,
+              subtitle: `${pharmacy.address}\nΑπόσταση: ${Math.round(pharmacy.distance)}μ. ${warning}\n${formatDate(pharmacy.createdAt)} ${pharmacy.workingHours}`,
               buttons: [{
                 type: 'url',
                 title: "📍 Οδηγίες Χάρτη",
