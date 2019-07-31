@@ -34,6 +34,10 @@ const pharmacySchema = new Schema(
 pharmacySchema.index({createdAt: 1},{expireAfterSeconds: 259200}); // Expires after 3 days
 pharmacySchema.index({ location: "2dsphere" });
 
+pharmacySchema.methods.getCreatedDate = function() {
+    return this.createdAt;
+}
+
 pharmacySchema.statics.findOpenPharmacies = function(date) {
   return this.find({
     $or: [

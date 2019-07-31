@@ -1,6 +1,8 @@
 const logger = require("../loggers").appLogger;
 const PharmacyModel = require("./models/pharmacy.model");
+const moment = require("moment-timezone");
 const { formatDate } = require("../utils/misc");
+moment.tz.setDefault("Europe/Athens");
 
 module.exports = {
   actions: {
@@ -11,8 +13,8 @@ module.exports = {
 
       let pharmacies = [];
       try {
-        const now = new Date();
-        logger.debug(`Looking for pharmacies at ${now.toISOString()}`);
+        const now = moment();
+        logger.debug(`Looking for pharmacies at ${now.format("LLLL")}`);
         pharmacies = await PharmacyModel.findNearestOpenPharmacies(
           userData.domainData.locationInCoordinates.latitude,
           userData.domainData.locationInCoordinates.longitude,
@@ -24,6 +26,7 @@ module.exports = {
 
       if (pharmacies && pharmacies.length) {
         logger.debug(`Found ${pharmacies.length} open pharmacies.`);
+        moment.locale("el");
 
         botResponses.push({
           type: 'text',
@@ -43,7 +46,7 @@ module.exports = {
             return {
               type: "card",
               title: pharmacy.name,
-              subtitle: `${pharmacy.address}\nΑπόσταση: ${Math.round(pharmacy.distance)}μ. ${warning}\n${formatDate(pharmacy.createdAt)} ${pharmacy.workingHours}`,
+              subtitle: `${pharmacy.address}\nΑπόσταση: ${Math.round(pharmacy.distance)}μ. ${warning}\n${moment(pharmacy.createdAt).format("l")} ${pharmacy.workingHours}`,
               buttons: [{
                 type: 'url',
                 title: "📍 Οδηγίες Χάρτη",
