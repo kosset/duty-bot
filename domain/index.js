@@ -18,7 +18,7 @@ module.exports = {
         pharmacies = await PharmacyModel.findNearestOpenPharmacies(
           userData.domainData.locationInCoordinates.latitude,
           userData.domainData.locationInCoordinates.longitude,
-          now,
+          now.toDate(),
           10);
       } catch(e) {
         throw e;
@@ -31,7 +31,7 @@ module.exports = {
         botResponses.push({
           type: 'text',
           options: [
-            `Τα ${pharmacies.length} κοντινότερα φαρμακεία είναι:`
+            `Τα ${pharmacies.length} κοντινότερα εφημερεύοντα φαρμακεία είναι:`
           ]
         });
 
