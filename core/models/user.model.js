@@ -74,7 +74,7 @@ userSchema.methods.setActiveContexts = function(newContexts) {
   }
 
   // Remove new Contexts with LifeSpan 0
-  contextsReadyToBeStored = contextsReadyToBeStored.filter(c => contextsToBeRemoved.includes(c.name));
+  contextsReadyToBeStored = contextsReadyToBeStored.filter(c => !contextsToBeRemoved.includes(c.name));
 
   this.contexts = contextsReadyToBeStored;
 };
