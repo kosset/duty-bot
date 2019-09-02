@@ -1,5 +1,7 @@
 const logger = require("../loggers").appLogger;
 const PharmacyModel = require("./models/pharmacy.model");
+const Nominatim = require("./clients/nominatim.client");
+const config = require("config");
 const moment = require("moment-timezone");
 const { formatDate } = require("../utils/misc");
 moment.tz.setDefault("Europe/Athens");
@@ -70,6 +72,21 @@ module.exports = {
         });
       }
 
+    },
+    searchGeolocation: async function(userData, botResponses) {
+
+      try {
+        const geolocation = new Nominatim(config.get('baseUrl'));
+        const results = await geolocation.freeFormSearch(userData.lastMessage);
+
+        userData.domainData.locationInCoordinates = {
+          latitude: results.features[0].geometry.coordinates[1],
+          longitude: results.features[0].geometry.coordinates[0]
+        };
+        userData.markModified('domainData');
+      } catch (e) {
+        logger.error(`Could not find geolocation results`)
+      }
     }
   },
 };

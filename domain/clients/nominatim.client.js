@@ -1,23 +1,24 @@
 const request = require("request");
 
-module.exports = class FacebookClient {
-  constructor() {
-    this.baseUrl = "https://nominatim.openstreetmap.org";
-    this.graphVersion = graphVersion;
+module.exports = class NominatimClient {
+  constructor(baseUrl) {
+    this.openStreetMapUrl = "https://nominatim.openstreetmap.org";
+    this.baseUrl = baseUrl;
   }
 
   freeFormSearch(q) {
     const that = this;
     const options = {
       method: "GET",
-      url: `${that.baseUrl}/search/${q}`,
+      url: `${that.openStreetMapUrl}/search/${encodeURIComponent(q)}`,
       qs: {
         format: "geocodejson",
         namedetails: 1,
         countrycodes: "GR"
       },
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Referer": that.baseUrl
       },
       json: true
     };
@@ -32,7 +33,7 @@ module.exports = class FacebookClient {
       request(options, (error, response, body) => {
         if (error) return reject(error); // This might be an exception
 
-        if ("error" in body) return reject(body.error);
+        if (response.statusCode > 299) return reject(body);
 
         return resolve(body);
       });

@@ -1,4 +1,5 @@
 port: 3000
+baseUrl: # the baseUrl/origin/domain of the bot
 
 # Logging configuration
 logging:

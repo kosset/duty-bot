@@ -1,4 +1,5 @@
 port: PORT
+baseUrl: BASE_URL # the baseUrl/origin/domain of the bot
 
 # Logging configuration
 logging:
