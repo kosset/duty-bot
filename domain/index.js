@@ -47,8 +47,8 @@ module.exports = {
             else warning = ``;
             return {
               type: "card",
-              title: pharmacy.name,
-              subtitle: `${pharmacy.address}\nΑπόσταση: ${Math.round(pharmacy.distance)}μ. ${warning}\n${moment(pharmacy.createdAt).format("l")} ${pharmacy.workingHours}`,
+              title: pharmacy.address,
+              subtitle: `${pharmacy.name.substring(0,40)}\nΑπόσταση: ${Math.round(pharmacy.distance)}μ. ${warning}\n${moment(pharmacy.createdAt).format("l")} ${pharmacy.workingHours}`,
               buttons: [{
                 type: 'url',
                 title: "📍 Οδηγίες Χάρτη",
