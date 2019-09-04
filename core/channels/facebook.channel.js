@@ -1,30 +1,22 @@
 const
   Client = require("../clients/facebook.client"),
+  BaseChannel = require("./base.channel")
   GenderClient = require("../clients/genderize.client"),
   misc = require('../../utils/misc'),
   logger = require('../../loggers').appLogger;
 
-module.exports = class FacebookChannel {
+module.exports = class FacebookChannel extends BaseChannel{
 
   constructor(token, graphVersion) {
+    super();
     this.client = new Client(token, graphVersion);
     this.genderizeClient = new GenderClient();
-
-    this._event = {};
 
     logger.info(`New Facebook channel created`);
   }
 
-  get event() {
-    return this._event;
-  }
-
-  set event(value) {
-    this._event = value;
-  }
-
   get userPSID() {
-    return this._event.sender.id;
+    return this.event.sender.id;
   }
 
   get userTextInput() {
@@ -110,7 +102,7 @@ module.exports = class FacebookChannel {
   }
 
   toFacebookResponse(nodeResponses, userData) {
-    const psid = userData.psid;
+    const psid = this.userPSID;
     const botId = this.event.recipient.id;
 
     // Iterating in nodeResponses create the list of FacebookResponses
