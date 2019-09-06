@@ -21,7 +21,7 @@ module.exports = {
           userData.domainData.locationInCoordinates.latitude,
           userData.domainData.locationInCoordinates.longitude,
           now.toDate(),
-          10);
+          6);
       } catch(e) {
         throw e;
       }

@@ -54,11 +54,13 @@ router.post(["/facebook", "/facebook/"], function(req, res) {
 
   // Checks this is an event from a page subscription
   if (body.object === "page") {
-
     // Create Channels and NLPs for the specific incoming event
-    const nodes = loadConvNodes('conversational_nodes');
-    const fbChannel = new channels.Facebook( config.get("facebook.page_access_token"), config.get("facebook.graph_version"));
-    const actions = {  ...domain.actions,  ...fbChannel.actions };
+    const nodes = loadConvNodes("conversational_nodes");
+    const fbChannel = new channels.Facebook(
+      config.get("facebook.page_access_token"),
+      config.get("facebook.graph_version")
+    );
+    const actions = { ...domain.actions, ...fbChannel.actions };
     const localNLP = new nlp.Local(nodes, actions);
     const wit = new nlp.Wit({ token: config.get("wit.token") }, nodes, actions);
     // const dialogflow = new nlp.Dialogflow({ projectId: config.get("dialogflow.project_id"), language: config.get("dialogflow.lang"), privateKey: config.get("dialogflow.private_key"), clientEmail: config.get("dialogflow.client_email") }, nodes, actions);
@@ -70,7 +72,7 @@ router.post(["/facebook", "/facebook/"], function(req, res) {
       let webhook_event = entry.messaging[0];
       webhook_event.channel = "facebook";
 
-      logger.debug(`Webhook got event: ${JSON.stringify(webhook_event)}`);
+      logger.debug(`Facebook Webhook got event: ${JSON.stringify(webhook_event)}`);
 
       //NOTE: Async functionality
       // Handle the event
@@ -86,15 +88,64 @@ router.post(["/facebook", "/facebook/"], function(req, res) {
   }
 });
 
-function  loadConvNodes(nodesDirectory) {
+const viberChannel = new channels.Viber(config.get("viber.base_url")+ "/api/viber", {
+  name: config.get("viber.name"),
+  avatar: config.get("viber.avatar_url"),
+  authToken: config.get("viber.auth_token"),
+  registerToEvents: config.get("viber.register_to_events")
+});
+viberChannel.init();
+
+router.post(["/viber", "/viber/"], function(req, res) {
+  let webhook_event = req.body;
+
+  logger.debug(`Viber Webhook got event: ${JSON.stringify(webhook_event)}`);
+  res.sendStatus(200);
+
+  switch (webhook_event.event) {
+    case "message":
+      // Create Channels and NLPs for the specific incoming event
+      const nodes = loadConvNodes("conversational_nodes");
+
+      const actions = { ...domain.actions, ...viberChannel.actions };
+      const localNLP = new nlp.Local(nodes, actions);
+      const wit = new nlp.Wit(
+        { token: config.get("wit.token") },
+        nodes,
+        actions
+      );
+      // const dialogflow = new nlp.Dial
+
+      webhook_event.channel = "viber";
+
+      //NOTE: Async functionality
+      // Handle the event
+      core.manageWebhookEvent(webhook_event, viberChannel, localNLP, wit);
+
+      break;
+    case "webhook":
+    case "conversation_started":
+    case "failed":
+    case "delivered":
+    case "seen":
+    case "unsubscribed":
+    case "subscribed":
+      break;
+  }
+});
+
+function loadConvNodes(nodesDirectory) {
   logger.info(`Reading all nodes from ${nodesDirectory}`);
   const convNodes = [];
   nodesDirectory = path.resolve(process.cwd(), nodesDirectory);
   //TODO: Make it async
-  fs.readdirSync(nodesDirectory).forEach((filename) => {
+  fs.readdirSync(nodesDirectory).forEach(filename => {
     const ext = path.extname(filename);
     if (ext === ".json") {
-      const content = fs.readFileSync(path.join(nodesDirectory, filename), "utf8");
+      const content = fs.readFileSync(
+        path.join(nodesDirectory, filename),
+        "utf8"
+      );
       try {
         convNodes.push(JSON.parse(content));
       } catch (e) {
@@ -104,7 +155,7 @@ function  loadConvNodes(nodesDirectory) {
   });
   /// Merge all together.
   const result = {};
-  convNodes.forEach((x) => {
+  convNodes.forEach(x => {
     Object.assign(result, x);
   });
   return result;
