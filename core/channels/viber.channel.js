@@ -161,7 +161,7 @@ module.exports = class ViberChannel extends BaseChannel {
               Buttons: [
                 {
                   ActionType: "location-picker",
-                  Text: "📍 Share Location",
+                  Text: response.buttonTitle || "📍 Share Location",
                   ActionBody: "none"
                 }
               ]
@@ -229,9 +229,9 @@ module.exports = class ViberChannel extends BaseChannel {
               Text: b.title,
               ActionType: "open-url",
               ActionBody: b.payload,
-              InternalBrowser: {
-                ActionButton: "none"
-              }
+              Silent: true,
+              OpenURLType: "external",
+              OpenURLMediaType: "not-media"
             };
           case "postback":
             return {

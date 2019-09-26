@@ -21,7 +21,7 @@ module.exports = {
           userData.domainData.locationInCoordinates.latitude,
           userData.domainData.locationInCoordinates.longitude,
           now.toDate(),
-          6);
+          5);
       } catch(e) {
         throw e;
       }
@@ -33,7 +33,8 @@ module.exports = {
         botResponses.push({
           type: 'text',
           options: [
-            `Τα ${pharmacies.length} κοντινότερα εφημερεύοντα φαρμακεία είναι:`
+            `Τα ${pharmacies.length} κοντινότερα εφημερεύοντα φαρμακεία είναι:`,
+            `Βρήκα εφημερεύοντα φαρμακεία. Αυτά είναι τα ${pharmacies.length} κοντινότερα:`
           ]
         });
 

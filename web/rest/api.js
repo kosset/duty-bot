@@ -104,6 +104,8 @@ router.post(["/viber", "/viber/"], function(req, res) {
 
   switch (webhook_event.event) {
     case "message":
+      if (webhook_event.silent) break;
+
       // Create Channels and NLPs for the specific incoming event
       const nodes = loadConvNodes("conversational_nodes");
 

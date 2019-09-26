@@ -71,7 +71,8 @@ const locationResponseSchema = new Schema({
   questions: {
     type: [String],
     required: true
-  }
+  },
+  buttonTitle: String
 }, { _id: false });
 
 const shareCardResponseSchema = new Schema({
