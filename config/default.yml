@@ -16,7 +16,6 @@ facebook:
   graph_version:
 
 viber:
-  base_url:
   auth_token:
   name:
   avatar_url:
