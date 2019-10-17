@@ -100,15 +100,14 @@ router.post(["/viber", "/viber/"], function(req, res) {
   let webhook_event = req.body;
 
   logger.debug(`Viber Webhook got event: ${JSON.stringify(webhook_event)}`);
-  res.sendStatus(200);
+  const nodes = loadConvNodes("conversational_nodes");
 
   switch (webhook_event.event) {
     case "message":
+      res.sendStatus(200);
       if (webhook_event.silent) break;
 
       // Create Channels and NLPs for the specific incoming event
-      const nodes = loadConvNodes("conversational_nodes");
-
       const actions = { ...domain.actions, ...viberChannel.actions };
       const localNLP = new nlp.Local(nodes, actions);
       const wit = new nlp.Wit(
@@ -125,13 +124,21 @@ router.post(["/viber", "/viber/"], function(req, res) {
       core.manageWebhookEvent(webhook_event, viberChannel, localNLP, wit);
 
       break;
-    case "webhook":
     case "conversation_started":
+      if ("NEW_USER_CLICKED" in nodes) {
+        const viberWelcomeMessage = viberChannel.toViberWelcomeMessage(nodes["NEW_USER_CLICKED"].responses);
+        res.status(200).send(viberWelcomeMessage);
+      } else {
+        res.sendStatus(200);
+      }
+      break;
+    case "webhook":
     case "failed":
     case "delivered":
     case "seen":
     case "unsubscribed":
     case "subscribed":
+      res.sendStatus(200);
       break;
   }
 });
