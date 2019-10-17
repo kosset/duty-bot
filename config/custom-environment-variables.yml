@@ -14,6 +14,12 @@ facebook:
   page_access_token: FB_PA_TOKEN
   graph_version: FB_GRAPH_VERSION
 
+viber:
+  base_url: BASE_URL
+  auth_token: VIBER_TOKEN
+  name: VIBER_BOT_NAME
+  avatar_url: VIBER_BOT_AVATAR_URL
+
 # MongoDB
 mongo:
   url: MONGO_URL
