@@ -88,7 +88,7 @@ router.post(["/facebook", "/facebook/"], function(req, res) {
   }
 });
 
-const viberChannel = new channels.Viber(config.get("viber.base_url")+ "/api/viber", {
+const viberChannel = new channels.Viber(config.get("baseUrl")+ "/api/viber", {
   name: config.get("viber.name"),
   avatar: config.get("viber.avatar_url"),
   authToken: config.get("viber.auth_token"),
