@@ -173,6 +173,43 @@ module.exports = class ViberChannel extends BaseChannel {
     });
   }
 
+
+  toViberWelcomeMessage(nodeResponses) {
+    const that = this;
+
+    let welcomeMessage = {
+      type: "text",
+      text: "",
+      sender: {
+        name: that.client.botName,
+        avatar: that.client.botAvatar
+      }
+    };
+
+    nodeResponses.forEach(function(response) {
+      switch (response.type) {
+        case "text":
+          welcomeMessage["text"] += misc.chooseRandom(response.options) + ' ';
+          break;
+        case "quickReplies":
+          welcomeMessage["text"] += misc.chooseRandom(response.questions);
+          welcomeMessage["min_api_version"] = 4;
+          welcomeMessage["keyboard"] = {
+            Buttons: response.replies.map(r => {
+              return {
+                ActionType: "reply",
+                Text: r,
+                ActionBody: r
+              };
+            })
+          };
+          break;
+      }
+    });
+
+    return welcomeMessage;
+  }
+
   static convertCardToViberButtons(card, MaxButtonsGroupRows = 7) {
     // Calculate the rows of each element in the card
     const rowsOfCardButtons = "buttons" in card ? card.buttons.length : 0; // Each button has 1 Row
