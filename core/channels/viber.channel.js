@@ -110,11 +110,7 @@ module.exports = class ViberChannel extends BaseChannel {
         case "text":
           return {
             type: "text",
-            text: misc.chooseRandom(response.options),
-            sender: {
-              name: that.client.botName,
-              avatar: that.client.botAvatar
-            }
+            text: misc.chooseRandom(response.options)
           };
         case "quickReplies":
           return {
