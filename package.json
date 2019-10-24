@@ -35,7 +35,7 @@
     "express": "~4.16.0",
     "js-yaml": "^3.13.1",
     "moment-timezone": "^0.5.26",
-    "mongoose": "^5.4.19",
+    "mongoose": "^5.7.5",
     "node-wit": "^5.0.0",
     "request": "^2.88.0",
     "winston": "^3.1.0",
