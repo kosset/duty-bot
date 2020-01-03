@@ -1,13 +1,14 @@
 {
   "DEFAULT_NODE": {
     "intents": ["Default Fallback"],
+    "postConditions": { "DEFAULT_NODE": 1 },
     "responses": [
       {
         "type": "text",
         "options": [
           "Χμμ.. δε κατάλαβα τι μου είπες.",
           "Δυστυχώς δεν έχω προγραμματιστεί να απαντάω σε αυτό.",
-          "Ξέρεις, η τεχνητή νοημοσύνη δεν έχει προχωρήσει αρκετά, αλλά δυσκολεύομαι να καταλάβω το τελευταίο που μου είπες."
+          "Ξέρεις, η τεχνητή νοημοσύνη έχει προχωρήσει αρκετά, αλλά δυσκολεύομαι να καταλάβω το τελευταίο που μου είπες."
         ]
       },
       {
@@ -26,11 +27,7 @@
     "responses": [
       {
         "type": "text",
-        "options": [
-          "Γειά σου!",
-          "Χαίρετε!",
-          "Βρε βρε βρε... :D"
-        ]
+        "options": ["Γειά σου!", "Χαίρετε!", "Βρε βρε βρε... :D"]
       },
       {
         "type": "text",
@@ -47,12 +44,7 @@
     "responses": [
       {
         "type": "text",
-        "options": [
-          "Αντίο!",
-          "Byee",
-          "Τα λέμεε..",
-          "Εις το επανιδείν!"
-        ]
+        "options": ["Αντίο!", "Byee", "Τα λέμεε..", "Εις το επανιδείν!"]
       }
     ]
   },
@@ -69,9 +61,10 @@
       }
     ]
   },
-  "PHARMACIES_NO_LOCATION": {
-    "intents": ["pharmacies_no_location", "FIND_PHARMACY"],
-    "postConditions": {"WAITING_FOR_LOCATION": 2},
+  "PHARMACIES_AFTER_DEFAULT_NODE": {
+    "intents": ["yes"],
+    "preConditions": ["DEFAULT_NODE"],
+    "postConditions": { "WAITING_FOR_LOCATION": 2 },
     "responses": [
       {
         "type": "text",
@@ -86,20 +79,53 @@
         "buttonTitle": "📍 Δώσε Τοποθεσία",
         "questions": [
           "Πάτησε το κουμπί και τοποθέτησε την πινέζα στο σημείο που σε ενδιαφέρει. Ενναλλακτικά μπορείς να γράψεις την τοποθεσία ως 'Δήμος, Νομός', π.χ. Δάφνη, Αττική."
+        ],
+        "alternative": {
+          "type": "quickReplies",
+          "questions": [
+            "Απλώς γράψε την τοποθεσία ως 'Δήμος, Νομός' ή 'Περιοχή, Νομός', για παράδειγμα"
+          ],
+          "replies": ["Δάφνη, Αττική", "Πυλαία, Θεσσαλονίκη", "Αβέρωφ, Λάρισα"]
+        }
+      }
+    ]
+  },
+  "PHARMACIES_NO_LOCATION": {
+    "intents": ["pharmacies_no_location", "FIND_PHARMACY"],
+    "postConditions": { "WAITING_FOR_LOCATION": 2 },
+    "responses": [
+      {
+        "type": "text",
+        "options": [
+          "Σε ποια τοποθεσία ψάχνεις φαρμακείο;",
+          "Που να ψάξω για φαρμακείο;",
+          "Χρειάζομαι μία τοποθεσία για να βρω τα κοντινότερα ανοιχτά φαρμακεία."
         ]
+      },
+      {
+        "type": "location",
+        "buttonTitle": "📍 Δώσε Τοποθεσία",
+        "questions": [
+          "Πάτησε το κουμπί και τοποθέτησε την πινέζα στο σημείο που σε ενδιαφέρει. Ενναλλακτικά μπορείς να γράψεις την τοποθεσία ως 'Δήμος, Νομός', π.χ. Δάφνη, Αττική."
+        ],
+        "alternative": {
+          "type": "quickReplies",
+          "questions": [
+            "Απλώς γράψε την τοποθεσία ως 'Δήμος, Νομός' ή 'Περιοχή, Νομός', για παράδειγμα"
+          ],
+          "replies": ["Δάφνη, Αττική", "Πυλαία, Θεσσαλονίκη", "Αβέρωφ, Λάρισα"]
+        }
       }
     ]
   },
   "LOCATION ATTACHMENT": {
     "intents": ["LOCATION ATTACHMENT"],
     "preConditions": ["WAITING_FOR_LOCATION"],
-    "postConditions": {"WAITING_FOR_LOCATION": 0},
+    "postConditions": { "WAITING_FOR_LOCATION": 0 },
     "responses": [
       {
         "type": "text",
-        "options": [
-          "Έλαβα την τοποθεσία σου, μισό να υπολογίσω..."
-        ]
+        "options": ["Έλαβα την τοποθεσία σου, μισό να υπολογίσω..."]
       }
     ],
     "actions": ["storeLocation", "showVerticalListOfNearestPharmacies"]
@@ -130,9 +156,7 @@
     "responses": [
       {
         "type": "text",
-        "options": [
-          "Έλαβα την τοποθεσία σου, μισό να υπολογίσω..."
-        ]
+        "options": ["Έλαβα την τοποθεσία σου, μισό να υπολογίσω..."]
       }
     ],
     "actions": ["storeLocation", "showVerticalListOfNearestPharmacies"]
@@ -142,9 +166,7 @@
     "responses": [
       {
         "type": "text",
-        "options": [
-          "Καλώς όρισες!"
-        ]
+        "options": ["Καλώς όρισες!"]
       },
       {
         "type": "text",
@@ -172,12 +194,12 @@
         "imageUrl": "https://www.dropbox.com/s/delzk3nfiqhj36o/black-and-white-black-and-white-connection-615479.jpg?raw=1",
         "subtitle": "Κάνε κλικ στο κουμπί και επέλεξε τον ή τους φίλους σου που επιθυμείς ",
         "shared": {
-            "title": "Εφημερεύοντα Φαρμακεία Κοντά",
-            "imageUrl": "https://www.dropbox.com/s/mq0a0a03epfuklc/dutybot.jpg?raw=1",
-            "subtitle": "Με λίγα κλικ, τα κοντινότερα Εφημερεύοντα Φαρμακεία βρίσκονται στην οθόνη σου",
-            "button": {
-              "title": "Ψάξε τώρα"
-            }
+          "title": "Εφημερεύοντα Φαρμακεία Κοντά",
+          "imageUrl": "https://www.dropbox.com/s/mq0a0a03epfuklc/dutybot.jpg?raw=1",
+          "subtitle": "Με λίγα κλικ, τα κοντινότερα Εφημερεύοντα Φαρμακεία βρίσκονται στην οθόνη σου",
+          "button": {
+            "title": "Ψάξε τώρα"
+          }
         }
       }
     ]
