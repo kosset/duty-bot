@@ -75,7 +75,7 @@ module.exports = class FacebookChannel extends BaseChannel{
     const that = this;
 
     try {
-      const responseData = that.toFacebookResponse(nodeResponses, userData); //Convert botResponses to responseData for facebook
+      const responseData = that.toFacebookResponseData(nodeResponses, userData); //Convert botResponses to responseData for facebook
       await misc.asyncForEach(responseData, async (res) => {
         logger.debug(`Sending response back to fb: ${JSON.stringify(res)}`);
         await that.client.sendTypingIndicator(that.userPSID);
@@ -101,12 +101,10 @@ module.exports = class FacebookChannel extends BaseChannel{
     return (delayInMilliSec > 1500) ? 1500 : delayInMilliSec;
   }
 
-  toFacebookResponse(nodeResponses, userData) {
+  toFacebookResponseData(nodeResponses, userData) {
     const psid = this.userPSID;
     const botId = this.event.recipient.id;
-
-    // Iterating in nodeResponses create the list of FacebookResponses
-    return nodeResponses.map(function (response) {
+    const toFacebookResponse = function (response) {
       switch (response.type) {
         case 'text':
           return {
@@ -224,18 +222,7 @@ module.exports = class FacebookChannel extends BaseChannel{
             }
           };
         case 'location':
-          return {
-            messaging_type: "RESPONSE",
-            recipient: {
-              id: psid
-            },
-            message: {
-              text: misc.chooseRandom(response.questions),
-              quick_replies: [{
-                content_type:"location"
-              }]
-            }
-          };
+          return toFacebookResponse(response.alternative);
         case 'sharecard':
           return  {
             messaging_type: "RESPONSE",
@@ -292,7 +279,10 @@ module.exports = class FacebookChannel extends BaseChannel{
         default:
           break;
       }
-    });
+    }
+
+    // Iterating in nodeResponses create the list of FacebookResponses
+    return nodeResponses.map(toFacebookResponse);
   }
 
   get actions() {
