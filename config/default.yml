@@ -23,7 +23,7 @@ viber:
 
 # MongoDB
 mongo:
-  url: mongodb://localhost:27017/bot-core
+  url: mongodb://localhost:27017/dutybot
 
 # Dialogflow
 dialogflow:

@@ -29,7 +29,7 @@ module.exports = class BaseChannel {
    * @returns {String}
    */
   get userPSID() {
-    throw new Error(`#userPSID() getter has not been implemented yet on channel.`)
+    throw new Error(`#userPSID() getter has not been implemented yet on channel.`);
   }
 
   /**
@@ -37,7 +37,7 @@ module.exports = class BaseChannel {
    * @returns {String | null}
    */
   get userTextInput() {
-    throw new Error(`#userTextInput() getter has not been implemented yet on channel.`)
+    throw new Error(`#userTextInput() getter has not been implemented yet on channel.`);
   }
 
   /**
@@ -46,15 +46,15 @@ module.exports = class BaseChannel {
    * @returns {String}
    */
   get userLastMessage() {
-    throw new Error(`#userLastMessage() getter has not been implemented yet on channel.`)
+    throw new Error(`#userLastMessage() getter has not been implemented yet on channel.`);
   }
 
   /**
    * Retrieves new User's Public data
-   * @returns {Promise<{gender: *, name: {last: *, first: *}, channel: string, psid: *, fetchedAt: *, picture: *}>}
+   * @returns {Promise<{name: {last: *, first: *}, channel: string, psid: *, fetchedAt: *, picture: *}>}
    */
   async retrieveNewUserData() {
-    throw new Error(`#retrieveNewUserData() has not been implemented yet on channel.`)
+    throw new Error(`#retrieveNewUserData() has not been implemented yet on channel.`);
   }
 
   /**
@@ -66,14 +66,14 @@ module.exports = class BaseChannel {
    * @returns {Promise<void>}
    */
   async sendResponse(nodeResponses, userData) {
-    throw new Error(`#sendResponse() has not been implemented yet on channel.`)
+    throw new Error(`#sendResponse() has not been implemented yet on channel.`);
   }
 
   /**
    * Mark the message as seen for the user
    */
   markAsSeen() {
-    throw new Error(`#markAsSeen() has not been implemented yet on channel.`)
+    throw new Error(`#markAsSeen() has not been implemented yet on channel.`);
   }
 
   /**
@@ -87,6 +87,6 @@ module.exports = class BaseChannel {
       exampleAction: async function (userData, responses) {
         // Do something asynchronously (for consistency)
       },
-    }
+    };
   }
-}
+};

@@ -10,7 +10,6 @@ const userSchema = new Schema(
     },
     picture: String,
     lastMessage: String,
-    gender: { type: String, enum: ['male', 'female', 'unknown'], default: 'unknown' },
     channel: { type: String, enum: ['facebook', 'viber'] },
     domainData: { type: Schema.Types.Mixed, default: {} }, // Data stored from parameters
     contexts: [{
