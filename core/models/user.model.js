@@ -32,7 +32,7 @@ const userSchema = new Schema(
 userSchema
   .virtual("name.full")
   .get(function() {
-      return this.name.first + " " + this.name.last
+      return this.name.first + " " + this.name.last;
   })
   .set(function(v) {
     this.name.first = v.substr(0, v.indexOf(" "));
@@ -56,7 +56,7 @@ userSchema.methods.setActiveContexts = function(newContexts) {
   // Decrease the lifespan of the old Contexts
   for (let context of this.contexts) {
     context.lifespan--;
-    if (context.lifespan > 0) contextsReadyToBeStored.push(context)
+    if (context.lifespan > 0) contextsReadyToBeStored.push(context);
   }
 
   // Store new incoming contexts

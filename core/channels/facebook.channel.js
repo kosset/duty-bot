@@ -1,6 +1,7 @@
 const
   Client = require("../clients/facebook.client"),
   BaseChannel = require("./base.channel"),
+  logger = require("../../loggers").appLogger,
   misc = require('../../utils/misc');
 
 module.exports = class FacebookChannel extends BaseChannel{

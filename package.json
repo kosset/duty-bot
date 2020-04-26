@@ -3,7 +3,10 @@
   "version": "1.3.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/server.js"
+    "start": "node ./bin/server.js",
+    "start:mongodb": "docker-compose -f ./docker/mongodb/docker-compose.yml up --build -d",
+    "docker:reset": "docker kill mongodb; docker rm mongodb;",
+    "load_db": "mongodump --host PetProjects-shard-0/petprojects-shard-00-00-hvfqf.mongodb.net:27017,petprojects-shard-00-01-hvfqf.mongodb.net:27017,petprojects-shard-00-02-hvfqf.mongodb.net:27017 --ssl --username $DB_USERNAME --password $DB_PASSWORD --authenticationDatabase admin --db $DB_NAME --collection pharmacies --out=- | \\mongorestore --authenticationDatabase=admin --username=root --password=example --dir=- --db=dutybot --collection=pharmacies"
   },
   "repository": {
     "type": "git",
@@ -11,7 +14,7 @@
   },
   "eslintConfig": {
     "parserOptions": {
-      "ecmaVersion": 2018,
+      "ecmaVersion": 2019,
       "sourceType": "module",
       "ecmaFeatures": {
         "impliedStrict ": true
@@ -26,7 +29,7 @@
     }
   },
   "engines": {
-    "node": "10.15.0"
+    "node": "10.17.0"
   },
   "dependencies": {
     "config": "^2.0.1",
@@ -35,7 +38,7 @@
     "express": "~4.16.0",
     "js-yaml": "^3.13.1",
     "moment-timezone": "^0.5.26",
-    "mongoose": "^5.7.5",
+    "mongoose": "^5.9.10",
     "node-wit": "^5.0.0",
     "request": "^2.88.0",
     "winston": "^3.1.0",

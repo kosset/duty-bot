@@ -26,7 +26,6 @@ module.exports = {
       throw e; // Break the cycle
     }
 
-
     try {
       // Natural Language Process
       if (channel.userTextInput) {
