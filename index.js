@@ -32,8 +32,8 @@ app.use(['/api','/api/'], apiRouter);
 /**
  * Database Connection
  */
-mongoose.connect(config.get('mongo.url'), {useCreateIndex: true, useNewUrlParser: true}).then(
-  () => { logger.info(`Successful connection with MongoDB`)},
+mongoose.connect(config.get('mongo.url'), {useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true}).then(
+  () => { logger.info(`Successful connection with MongoDB`);},
   error => { logger.error(error); process.exit(1);}
 );
 

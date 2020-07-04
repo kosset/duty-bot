@@ -1,15 +1,13 @@
 const Client = require("../clients/viber.client"),
-  BaseChannel = require("./base.channel");
-(GenderClient = require("../clients/genderize.client")),
-  (misc = require("../../utils/misc")),
-  (logger = require("../../loggers").appLogger);
+  BaseChannel = require("./base.channel"),
+  misc = require("../../utils/misc"),
+  logger = require("../../loggers").appLogger;
 
 module.exports = class ViberChannel extends BaseChannel {
   constructor(webhookUrl, opts) {
     super();
     this.webhookUrl = webhookUrl;
     this.client = new Client(opts);
-    this.genderizeClient = new GenderClient();
   }
 
   async init() {
@@ -58,19 +56,6 @@ module.exports = class ViberChannel extends BaseChannel {
     const firstName = that.event.sender.name ? that.event.sender.name.split(" ")[0] : "UNKNOWN_VIBER_USER";
     const lastName = that.event.sender.name ? that.event.sender.name.replace(firstName, ""): "UNKNOWN_VIBER_USER"; // That means that we might miss some names
 
-    // Request gender of the user
-    try {
-      if (!data.gender && firstName !== "UNKNOWN_VIBER_USER") {
-        const genderRes = await that.genderizeClient.getGenderByName(
-          firstName
-        );
-        data.gender = genderRes.gender;
-      }
-    } catch (e) {
-      logger.error(`Could not get User gender by name from genderize: ${e}`);
-      throw e;
-    }
-
     return {
       psid: that.userPSID, // Platform Scoped ID
       name: {
@@ -79,7 +64,6 @@ module.exports = class ViberChannel extends BaseChannel {
       },
       picture: that.event.sender.avatar,
       channel: "viber",
-      gender: data.gender,
       fetchedAt: new Date()
     };
   }

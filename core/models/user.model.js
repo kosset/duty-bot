@@ -10,7 +10,6 @@ const userSchema = new Schema(
     },
     picture: String,
     lastMessage: String,
-    gender: { type: String, enum: ['male', 'female', 'unknown'], default: 'unknown' },
     channel: { type: String, enum: ['facebook', 'viber'] },
     domainData: { type: Schema.Types.Mixed, default: {} }, // Data stored from parameters
     contexts: [{
@@ -33,7 +32,7 @@ const userSchema = new Schema(
 userSchema
   .virtual("name.full")
   .get(function() {
-      return this.name.first + " " + this.name.last
+      return this.name.first + " " + this.name.last;
   })
   .set(function(v) {
     this.name.first = v.substr(0, v.indexOf(" "));
@@ -57,17 +56,22 @@ userSchema.methods.setActiveContexts = function(newContexts) {
   // Decrease the lifespan of the old Contexts
   for (let context of this.contexts) {
     context.lifespan--;
-    if (context.lifespan > 0) contextsReadyToBeStored.push(context)
+    if (context.lifespan > 0) contextsReadyToBeStored.push(context);
   }
 
-  // Store new incoming contexts
+  // Store new incoming contexts or update old ones
   const nCNs = Object.keys(newContexts);
   for (let newContextName of nCNs) {
     if (newContexts[newContextName] > 0) {
-      contextsReadyToBeStored.push({
-        name: newContextName,
-        lifespan: newContexts[newContextName]
-      });
+      const contextIndex = contextsReadyToBeStored.findIndex(c => c.name === newContextName);
+      if (contextIndex > -1) {
+        contextsReadyToBeStored[contextIndex].lifespan = newContexts[newContextName]; // If exists update the lifespan
+      } else {
+        contextsReadyToBeStored.push({
+          name: newContextName,
+          lifespan: newContexts[newContextName]
+        });
+      }
     } else if (newContexts[newContextName] === 0) {
       contextsToBeRemoved.push(newContextName);
     }

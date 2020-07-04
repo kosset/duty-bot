@@ -3,7 +3,6 @@ const PharmacyModel = require("./models/pharmacy.model");
 const Nominatim = require("./clients/nominatim.client");
 const config = require("config");
 const moment = require("moment-timezone");
-const { formatDate } = require("../utils/misc");
 moment.tz.setDefault("Europe/Athens");
 
 module.exports = {
@@ -59,7 +58,7 @@ module.exports = {
                 title: `📞 ${pharmacy.phone}`,
                 payload: `+30${pharmacy.phone}`
               }]
-            }
+            };
           })
         });
       } else {
@@ -86,7 +85,7 @@ module.exports = {
         };
         userData.markModified('domainData');
       } catch (e) {
-        logger.error(`Could not find geolocation results`)
+        logger.error(`Could not find geolocation results`);
       }
     }
   },

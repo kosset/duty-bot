@@ -1,16 +1,14 @@
 const
   Client = require("../clients/facebook.client"),
-  BaseChannel = require("./base.channel")
-  GenderClient = require("../clients/genderize.client"),
-  misc = require('../../utils/misc'),
-  logger = require('../../loggers').appLogger;
+  BaseChannel = require("./base.channel"),
+  logger = require("../../loggers").appLogger,
+  misc = require('../../utils/misc');
 
 module.exports = class FacebookChannel extends BaseChannel{
 
   constructor(token, graphVersion) {
     super();
     this.client = new Client(token, graphVersion);
-    this.genderizeClient = new GenderClient();
 
     logger.info(`New Facebook channel created`);
   }
@@ -47,17 +45,6 @@ module.exports = class FacebookChannel extends BaseChannel{
       throw e;
     }
 
-    // Request gender of the user
-    try {
-      if (!data.gender) {
-        const genderRes = await that.genderizeClient.getGenderByName(data.first_name);
-        data.gender = genderRes.gender;
-      }
-    } catch (e) {
-      logger.error(`Could not get User gender by name from genderize: ${e}`);
-      throw e;
-    }
-
     return {
       psid: that.userPSID, // Platform Scoped ID
       name: {
@@ -66,7 +53,6 @@ module.exports = class FacebookChannel extends BaseChannel{
       },
       picture: data.profile_pic,
       channel: 'facebook',
-      gender: data.gender,
       fetchedAt: new Date()
     };
   }
@@ -215,7 +201,7 @@ module.exports = class FacebookChannel extends BaseChannel{
                             };
                         }
                       })
-                    }
+                    };
                   })
                 }
               }
@@ -279,7 +265,7 @@ module.exports = class FacebookChannel extends BaseChannel{
         default:
           break;
       }
-    }
+    };
 
     // Iterating in nodeResponses create the list of FacebookResponses
     return nodeResponses.map(toFacebookResponse);
@@ -299,6 +285,6 @@ module.exports = class FacebookChannel extends BaseChannel{
         };
         userData.markModified('domainData');
       }
-    }
+    };
   }
 };

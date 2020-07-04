@@ -62,8 +62,8 @@ router.post(["/facebook", "/facebook/"], function(req, res) {
     );
     const actions = { ...domain.actions, ...fbChannel.actions };
     const localNLP = new nlp.Local(nodes, actions);
-    const wit = new nlp.Wit({ token: config.get("wit.token") }, nodes, actions);
-    // const dialogflow = new nlp.Dialogflow({ projectId: config.get("dialogflow.project_id"), language: config.get("dialogflow.lang"), privateKey: config.get("dialogflow.private_key"), clientEmail: config.get("dialogflow.client_email") }, nodes, actions);
+    // const wit = new nlp.Wit({ token: config.get("wit.token") }, nodes, actions);
+    const dialogflow = new nlp.Dialogflow({ projectId: config.get("dialogflow.project_id"), language: config.get("dialogflow.lang"), privateKey: config.get("dialogflow.private_key"), clientEmail: config.get("dialogflow.client_email") }, nodes, actions);
 
     // Iterates over each entry - there may be multiple if batched
     body.entry.forEach(function(entry) {
@@ -76,7 +76,7 @@ router.post(["/facebook", "/facebook/"], function(req, res) {
 
       //NOTE: Async functionality
       // Handle the event
-      core.manageWebhookEvent(webhook_event, fbChannel, localNLP, wit);
+      core.manageWebhookEvent(webhook_event, fbChannel, localNLP, dialogflow);
     });
 
     // Returns a '200 OK' response to all requests
@@ -115,13 +115,13 @@ router.post(["/viber", "/viber/"], function(req, res) {
         nodes,
         actions
       );
-      // const dialogflow = new nlp.Dial
+      const dialogflow = new nlp.Dialogflow({ projectId: config.get("dialogflow.project_id"), language: config.get("dialogflow.lang"), privateKey: config.get("dialogflow.private_key"), clientEmail: config.get("dialogflow.client_email") }, nodes, actions);
 
       webhook_event.channel = "viber";
 
       //NOTE: Async functionality
       // Handle the event
-      core.manageWebhookEvent(webhook_event, viberChannel, localNLP, wit);
+      core.manageWebhookEvent(webhook_event, viberChannel, localNLP, dialogflow);
 
       break;
     case "conversation_started":
