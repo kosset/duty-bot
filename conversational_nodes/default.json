@@ -132,8 +132,9 @@
     "actions": ["storeLocation", "showVerticalListOfNearestPharmacies"]
   },
   "LOCATION_FALLBACK": {
-    "intents": ["Default Fallback"],
+    "intents": ["Default Fallback", "location_text"],
     "preConditions": ["WAITING_FOR_LOCATION"],
+    "postConditions": { "WAITING_FOR_LOCATION": 0 },
     "responses": [
       {
         "type": "text",

@@ -59,14 +59,19 @@ userSchema.methods.setActiveContexts = function(newContexts) {
     if (context.lifespan > 0) contextsReadyToBeStored.push(context);
   }
 
-  // Store new incoming contexts
+  // Store new incoming contexts or update old ones
   const nCNs = Object.keys(newContexts);
   for (let newContextName of nCNs) {
     if (newContexts[newContextName] > 0) {
-      contextsReadyToBeStored.push({
-        name: newContextName,
-        lifespan: newContexts[newContextName]
-      });
+      const contextIndex = contextsReadyToBeStored.findIndex(c => c.name === newContextName);
+      if (contextIndex > -1) {
+        contextsReadyToBeStored[contextIndex].lifespan = newContexts[newContextName]; // If exists update the lifespan
+      } else {
+        contextsReadyToBeStored.push({
+          name: newContextName,
+          lifespan: newContexts[newContextName]
+        });
+      }
     } else if (newContexts[newContextName] === 0) {
       contextsToBeRemoved.push(newContextName);
     }
