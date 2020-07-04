@@ -8,9 +8,15 @@ module.exports = class Dialogflow extends BaseNLP{
     super(nodes, actions);
     this.projectId = auth.projectId;
     this.languageCode = auth.language;
+    let privateKey;
+    try {
+      privateKey = JSON.parse(auth.privateKey);
+    } catch (e) {
+      privateKey = auth.privateKey;
+    }
     this.sessionClient = new dialogflowNlp.SessionsClient({
       credentials: {
-        private_key: auth.privateKey,
+        private_key: privateKey,
         client_email: auth.clientEmail
       }
     });
