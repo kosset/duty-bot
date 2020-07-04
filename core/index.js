@@ -91,6 +91,7 @@ module.exports = {
 
   storeUserData: async function(userData) {
     try {
+      delete userData.domainData; // TODO: Change this to constant/temporary data and clean only temporary
       await userData.save();
     } catch (e) {
       logger.error(

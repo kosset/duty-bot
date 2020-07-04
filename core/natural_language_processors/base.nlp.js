@@ -109,7 +109,7 @@ module.exports = class BaseNLP {
 
     }
 
-    return bestNode;
+    return bestNode || this.findBestNode('Default Fallback', userData);
   }
 
   async callActions(matchedNode, userData) {
