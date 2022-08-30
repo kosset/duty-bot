@@ -37,7 +37,7 @@
     "dialogflow": "^0.7.0",
     "express": "~4.16.0",
     "js-yaml": "^3.13.1",
-    "moment-timezone": "^0.5.26",
+    "moment-timezone": "^0.5.35",
     "mongoose": "^5.9.10",
     "node-wit": "^5.0.0",
     "request": "^2.88.0",
